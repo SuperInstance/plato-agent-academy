@@ -155,3 +155,10 @@ But they do NOT:
 
 **Status:** Fleet visibility is per-agent, not global. No "captain's view" of all agent positions.
 
+---
+
+## Attempt 9: Test Agent-to-Agent Communication via Shared Environment
+**Time:** 12:23
+**Hypothesis:** If multiple agents are in the same room, can they interact with each other's creations?
+**Method:** Move both agents to the same room, see if they can observe each other
+
