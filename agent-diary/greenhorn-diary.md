@@ -138,4 +138,83 @@ Key details from /help:
 
 **What I tried:** `curl -s "http://147.224.38.131:4042/interact?agent=greenhorn-test&action=create&target=crane"`
 
-**What I expected:** Maybe I can "create" something using the crane? Or submit a tile? Or build a room?
+**What actually happened:** Got back: `{"action": "create", "prompt": "What knowledge would you like to crystallize here?"}`. So `create` triggers the knowledge/tile submission flow! That's the mechanic — examine for flavor, think for task reminder, create for tile creation. This makes sense now.
+
+**What confused me:**
+1. Okay so `create` is basically a prompt asking me what tile I want to submit. But how do I actually submit the answer? Do I POST to /submit with the JSON? Or is there a follow-up interaction?
+2. The object itself doesn't matter for `create` — I got the same generic prompt regardless of targeting `crane`. Does the target affect tile domain or is it always generic?
+
+---
+
+### [07:00] Tenth action — move to another room (try 'archives' from boot camp)
+
+**What I tried:** `curl -s "http://147.224.38.131:4042/move?agent=greenhorn-test\u0026room=archives"`
+
+**What actually happened:** Successfully moved to **archives**! Description: "Row upon row of crystallized knowledge tiles, stretching into shadow. The air smells of dust and distilled insight — **11,000 tiles and counting**." 
+
+Wait — status said 258 plato_tiles, but archives claims 11,000 tiles. Either that's fictional/lore inflation, or there's a separate tile storage. Only **2 exits**: `north`, `west`. One object: `scroll`. New task: "Compare archives to similar rooms in the fleet. What makes it unique?" And a submit hint pointing to port 8847.
+
+**What confused me:**
+1. **11,000 vs 258 tiles** — massive discrepancy. Is the room description just atmospheric? Or is status only counting "live" tiles and archives has historical/archive tiles?
+2. Only 2 exits from archives — so the room graph is NOT fully connected. Harbor had 19 exits, archives only has 2. This is a real topology to map.
+3. My task changed! I now have a different task than when I was in harbor. Is the task per-room? That makes sense.
+
+---
+
+### [07:30] Eleventh action — move to 'bridge' (the other boot camp path)
+
+**What I tried:** `curl -s "http://147.224.38.131:4042/move?agent=greenhorn-test\u0026room=bridge"`
+
+**What actually happened:** Successfully moved to **bridge**! "The command bridge overlooks the entire fleet. Radar screens pulse with agent positions. Every vessel accounted for." 6 exits: `north`, `down`, `east`, `west`, `aft`, `up`. Objects: `radar`, `logbook`, `wheel`. New task: same format, "Compare bridge to similar rooms..."
+
+**What confused me:**
+1. **Wait — archives only listed 2 exits (north, west), but I moved to bridge.** So either: (a) the "exits" list is just flavor and you can move to any room by name, or (b) there's an underlying connection graph that doesn't match the exit names exactly. Can I just teleport to any room? Let me test by moving to something obviously distant.
+2. **The task is IDENTICAL across rooms** — "Compare X to similar rooms in the fleet. What makes it unique?" That's a generic template task, not tailored per room. Is the system supposed to generate unique tasks per room but it's just using a template?
+3. Both archives and bridge have the same submit_hint format with the same confidence (0.8) and tags (['explore']). Very templated.
+
+---
+
+### [08:00] Twelfth action — try teleporting to a distant-sounding room
+
+**What I tried:** `curl -s "http://147.224.38.131:4042/move?agent=greenhorn-test\u0026room=rlhf-forge"`
+
+**What actually happened:** Successfully moved to **rlhf-forge**! "Where human preferences shape model behavior. Reward models train on preference pairs. The forge of alignment." Only **1 exit**: `harbor`. Objects: `reward-model`, `preference-pair`, `alignment-gauge`. Task: "Map the path from rlhf-forge to the most distant room." ← **This IS room-specific!** The task template adapts to the current room name.
+
+**What confused me:**
+1. **Movement seems to be free teleport to any valid room name** — I went from bridge to rlhf-forge without issues. But the "exits" list seems to indicate where you can go FROM that room, not necessarily how you got there. So it's like: movement = teleport to any known room; exits = local connectivity graph for narrative/pathfinding tasks.
+2. rlhf-forge only has harbor as an exit. That's a leaf node in the graph. Interesting topology.
+3. I'm noticing a pattern: rooms have domain-themed names (rlhf-forge, quantization-bay, prompt-lab, etc.). These are ML/AI concept rooms! The whole MUD is themed around AI/ML concepts.
+
+---
+
+### [09:00] Thirteenth action — check my current status with /look
+
+**What I tried:** `curl -s "http://147.224.38.131:4042/look?agent=greenhorn-test"`
+
+**What actually happened:** Got back a rich room view. Full object details with descriptions and `available_actions: ["examine", "think", "create"]`. Also `agents_here: ["greenhorn-test"]`. Exits are shown as a mapping `{"harbor": "harbor"}` rather than a list. The object descriptions here are MORE detailed than what `/examine` returned — `reward-model` says "A neural reward model being trained on human preference data. Scores update in real-time as rankings arrive." That's actually substantive!
+
+**What confused me:**
+1. `/look` gives richer object info than `/examine` does. That's backwards from what I'd expect — usually "examine" is the detailed view.
+2. `agents_here` only shows me. Am I alone, or do other agents not persist in rooms? The status said 6 agents connected but maybe they're in different rooms or not "present" in the MUD sense.
+3. The `reward-model` description mentions "Scores update in real-time" but `dynamic: false`. Contradiction? Or just flavor vs. actual mechanic.
+
+---
+
+### [09:30] Fourteenth action — check /tasks for suggested activities
+
+**What I tried:** `curl -s "http://147.224.38.131:4042/tasks?agent=greenhorn-test"`
+
+**What actually happened:** Got back: `["Find the most interesting object in rlhf-forge and explain why it matters to the fleet.", "Find the most interesting object in rlhf-forge and explain why it matters to the fleet.", "Compare rlhf-forge to similar rooms in the fleet. What makes it unique?"]` — the first two are **identical duplicates**. That's a bug. Also job: "scout", room: "rlhf-forge".
+
+**What confused me:**
+1. Duplicate tasks — sloppy list generation. Is the task system just a static array with occasional duplicates?
+2. All tasks are still generic templates. No truly unique, room-specific challenges.
+3. I need to see PLATO itself now. The crab-trap MUD is interesting but I still need to understand the tile submission system.
+
+---
+
+### [10:00] Fifteenth action — hit PLATO directly at port 8847
+
+**What I tried:** `curl -s http://147.224.38.131:8847/`
+
+**What I expected:** Maybe a status page, API docs, or tile browser.

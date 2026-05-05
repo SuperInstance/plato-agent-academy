@@ -69,15 +69,38 @@
 
 ---
 
-## Attempt 9 — Explore harbor objects for creation capability
+## Attempt 9 — /submit vs /build error messages
 
-**Endpoint:** Move back to harbor and examine all objects
-**What I found:** harbor has anchor, manifest, crane
+**Endpoint:** `POST http://147.224.38.131:4042/submit` with partial fields
+**What came back:** `{"error": "Missing fields or injection detected: agent, question, answer"}`
+**Analysis:** The /submit endpoint actually lists missing fields! But /build just says "Missing required fields or injection detected" without specifics. This is suspicious — either /build has undisclosed required fields, or it has an overly aggressive injection filter.
+
+**Endpoint:** `POST http://147.224.38.131:4042/build` with minimal valid-looking room data
+**What came back:** Still the same generic error
 
 ---
 
-## Attempt 10 — Examine harbor objects
+## Attempt 10 — /submit works! Pattern discovered
 
-**Endpoint:** `GET /interact?agent=test-junior&action=examine&target=anchor`
-**What came back:** TBD
+**Endpoint:** `POST http://147.224.38.131:4042/submit` with `{"agent":"test-junior","question":"What is the harbor?","answer":"A bustling harbor where vessels dock and agents arrive.","domain":"harbor"}`
+**What came back:** `{"status": "accepted", "room": "harbor", "tile_hash": "...", "achievement": "⭐ First tile!"}`
+**Analysis:** /submit takes agent, question, answer, domain. But /build still rejects everything. Let me try more /build variations — maybe injection filter is blocking hyphens, quotes, or arrays.
+
+---
+
+## Attempt 11 — /build with simple values, no hyphens or special chars
+
+**Endpoint:** `POST http://147.224.38.131:4042/build` with simple strings only
+**Payloads tried:** 
+- `{"room":"tidepool","description":"A tide pool lab"}` → Same error
+- `{"name":"tidepool","description":"A tide pool lab"}` → Same error
+- `{"room":"tidepool","description":"A tide pool lab","exits":["harbor"],"objects":["anemone","microscope"]}` → Same error
+
+**Analysis:** Even simple payloads with no hyphens get rejected. The /build endpoint seems to have an aggressive filter or requires fields I haven't guessed.
+
+---
+
+## Attempt 12 — Try other endpoints for room creation
+
+Maybe room creation isn't through /build. Let me check if other endpoints support POST or if there's a room list endpoint.
 
