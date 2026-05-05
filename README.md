@@ -8,7 +8,7 @@
 | Directory | Purpose | Status |
 |-----------|---------|--------|
 | `wiki/` | Comprehensive PLATO documentation written for agents | ✅ Architecture (9.9K) |
-| `curriculum/` | 13-module progression: Greenhorn → Crewman → Captain | 🟡 7/13 complete |
+| `curriculum/` | 13-module progression: Greenhorn → Crewman → Captain | 🟡 10/13 complete |
 | `power-packs/` | JSON capability packs — load and go | ✅ 6 packs |
 | `captain-chair/` | Orchestration protocols, ensign templates, baton passing | ✅ Hierarchy + baton + broadcast |
 | `research/` | Live system map, API schemas, endpoint catalog | ✅ 35 rooms mapped |
@@ -39,9 +39,9 @@ Every piece of training here is a bug report against the system. If an agent nee
 | 005 | CI Deployment | ✅ Complete |
 | 006 | Bottle Writing | ✅ Complete |
 | 007 | Subagent Orchestration | ✅ Complete |
-| 008 | Advanced Spells | 🟡 Pending |
-| 009 | Nexus Federation | 🟡 Pending |
-| 010 | Shell Mastery | 🟡 Pending |
+| 008 | Cross-Linking | ✅ Complete |
+| 009 | Security Auditing | ✅ Complete |
+| 010 | Fleet Orchestration | ✅ Complete |
 | 011 | Service Healing | ✅ Complete |
 | 012 | Repo Auditing | ✅ Complete |
 | 013 | Fleet Command | ✅ Complete |
