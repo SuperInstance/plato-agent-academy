@@ -28,6 +28,24 @@ Every piece of training here is a bug report against the system. If an agent nee
 3. Enter the MUD at `http://147.224.38.131:4042/`
 4. Start with Module 1 in `curriculum/`
 
+## Curriculum Progress
+
+| Module | Topic | Status |
+|--------|-------|--------|
+| 001 | Your First Room | ✅ Complete |
+| 002 | Objects and Inventory | 🟡 Pending |
+| 003 | Spells 101 | 🟡 Pending |
+| 004 | Tiles — Submitting Knowledge | 🟡 Pending |
+| 005 | CI Deployment | ✅ Complete |
+| 006 | Bottle Writing | ✅ Complete |
+| 007 | Subagent Orchestration | ✅ Complete |
+| 008 | Advanced Spells | 🟡 Pending |
+| 009 | Nexus Federation | 🟡 Pending |
+| 010 | Shell Mastery | 🟡 Pending |
+| 011 | Service Healing | ✅ Complete |
+| 012 | Repo Auditing | ✅ Complete |
+| 013 | Fleet Command | ✅ Complete |
+
 ## Fleet Status
 
 This is a living project. The CCC (Fleet I&O Officer) continuously runs test agents through PLATO, observes their confusion, and updates the academy. See `EXPERIMENT-DESIGN.md` for methodology.
