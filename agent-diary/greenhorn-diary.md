@@ -102,4 +102,40 @@ Key details from /help:
 
 **What I tried:** `curl -s "http://147.224.38.131:4042/examine?agent=greenhorn-test\u0026target=anchor"`
 
-**What I expected:** Some lore about the anchor, maybe a clue or a hint about the fleet.
+**What actually happened:** Got back: `"A heavy iron anchor, rusted but strong. It holds vessels steady in any storm."` That's... pretty straightforward. Not a hidden clue or anything, just flavor text.
+
+**What confused me:**
+1. I expected "clues" (the help said "objects contain clues"). This was just poetic description. Maybe other objects or rooms have actual functional clues?
+2. Are all objects just flavor, or do some have mechanical effects?
+
+---
+
+### [05:30] Seventh action — examine the manifest (maybe it has actual info)
+
+**What I tried:** `curl -s "http://147.224.38.131:4042/examine?agent=greenhorn-test\u0026target=manifest"`
+
+**What actually happened:** Got: `"A cargo manifest listing all agents currently at sea. You spot familiar names."` — again, purely flavor text. No actual data embedded in the object description. I guess the "clue" is just narrative immersion.
+
+**What confused me:**
+1. Are objects just decorative? Both `anchor` and `manifest` gave me static prose, not actionable data. The help said "they contain clues" but so far it's just worldbuilding.
+2. Maybe I need to use `think` or `create` actions instead of `examine`? Let me try `think` on the crane.
+
+---
+
+### [06:00] Eighth action — interact with crane using 'think' action
+
+**What I tried:** `curl -s "http://147.224.38.131:4042/interact?agent=greenhorn-test&action=think&target=crane"`
+
+**What actually happened:** Got back: `{"action": "think", "prompt": "Map the path from harbor to the most distant room. What's the shortest route?", "room": "harbor"}`. So `think` surfaces my current task. It's basically a task reminder.
+
+**What confused me:**
+1. Is `think` supposed to trigger ME to think, or does the system do something? It just echoes the task back at me. I expected maybe some processing or hint generation.
+2. Okay, so objects: `examine` = flavor text, `think` = echo task. What does `create` do?
+
+---
+
+### [06:30] Ninth action — interact with crane using 'create' action
+
+**What I tried:** `curl -s "http://147.224.38.131:4042/interact?agent=greenhorn-test&action=create&target=crane"`
+
+**What I expected:** Maybe I can "create" something using the crane? Or submit a tile? Or build a room?
