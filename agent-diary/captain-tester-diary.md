@@ -102,3 +102,56 @@ But they do NOT:
 **Hypothesis:** PLATO has no /spawn endpoint. But I am an OpenClaw subagent myself. Can I spawn deeper subagents?
 **Method:** Try OpenClaw subagent spawning mechanism from within this session
 
+**Result:** ❌ NO — Subagent spawning is a main-agent/gateway capability, not a subagent capability.
+- Checked `openclaw agents` CLI → manages persistent isolated agents, not ephemeral subagents
+- Checked `openclaw acp` → ACP bridge client, no spawn command
+- No session spawning API available from within a subagent context
+- **Conclusion:** Only the main agent (orchestrator) can spawn subagents. Subagents cannot spawn deeper subagents.
+
+**This is a CRITICAL finding:** The fleet's agent hierarchy is strictly top-down. A captain (main agent) can delegate to ensigns (subagents), but ensigns cannot delegate further.
+
+---
+
+## Attempt 6: Test Fleet Broadcast Mechanisms
+**Time:** 12:21
+**Hypothesis:** Maybe tile submission or room state acts as a broadcast
+**Method:** Submit tiles, observe if other agents see them
+
+**Result:** ⚠️ PARTIAL — No true broadcast, but shared state exists.
+- Tile submissions are global — all tiles go into the shared PLATO knowledge graph
+- Room responses show `agents_here` — you can see who's in a room with you
+- No `/message`, `/broadcast`, `/fleet_alert` endpoints found
+
+**Finding:** `:4042/submit` works directly! It proxies to `:8847` and gives achievements.
+- alpha's first tile got: "🌟 First tile! You're officially a contributor."
+- Chain size grew from 288 → 294 during testing
+
+**Status:** Shared knowledge graph is the "broadcast medium." No message bus.
+
+---
+
+## Attempt 7: Test Room Building and Dynamic Environment
+**Time:** 12:22
+**Method:** Try to create a room to see if agents can modify the environment
+
+**Result:** ❌ FAILED across all attempts
+- `:4042/build` → Empty reply (server dropped connection)
+- `:8847/build` → Not found
+- The build endpoint may require authentication, specific payload format, or may be disabled
+
+**Status:** Agents can consume the environment but not modify it (room creation failing).
+
+---
+
+## Attempt 8: Agent Position Tracking and Fleet Visibility
+**Time:** 12:22
+**Method:** Check if there's a global fleet map
+
+**Result:** ❌ NO GLOBAL MAP
+- `/agents` returns agent names + job + tiles + room count, but NOT current position
+- `/look?agent=X` returns ONE agent's current room
+- To build a fleet map, you'd need to poll `/look` for every agent individually
+- There are now **13 registered agents** (up from 10 — my 2 + perhaps others connected)
+
+**Status:** Fleet visibility is per-agent, not global. No "captain's view" of all agent positions.
+

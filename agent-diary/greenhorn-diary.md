@@ -297,4 +297,34 @@ Chain size went 287 → 291. Consistent +4 per tile. So each tile submission add
 
 **What I tried:** `curl -s -X POST -H "Content-Type: application/json" -d '{"domain":"test","question":"What?","answer":"No.","source":"greenhorn-test","confidence":1.0}' http://147.224.38.131:8847/submit`
 
-**What I expected:** Should be rejected — answer too short (minimum 20 chars), maybe absolute claim (confidence 1.0), maybe duplicate.
+**What actually happened:** REJECTED! Response:
+- `status: "rejected"`
+- `reason: "Answer too short (3 < 20)"`
+- `gate: "P0"` — there's a named gate stage!
+- `trace_id` with `outcome_confidence: 0.0`
+
+The quality gate is REAL and actively enforcing rules. Minimum answer length is 20 characters.
+
+**What confused me:**
+1. The gate is named "P0" — is there a P1, P2, etc.? Multi-stage gating?
+2. I had confidence 1.0 but it didn't trigger the "absolute_claim" rejection. Maybe that's a separate check, or maybe it only flags certain patterns of absolute language, not just confidence=1.0.
+
+---
+
+### [12:30] Twentieth action — try to create a new room via POST /build
+
+**What I tried:** `curl -s -X POST -H "Content-Type: application/json" -d '{"agent":"greenhorn-test","room_name":"greenhorn-nest","description":"A small cozy nest built by a curious greenhorn agent. Warm light, scattered notes, and the faint hum of discovery.","theme":"exploration","objects":["notebook","compass","crumbs"]}' http://147.224.38.131:4042/build`
+
+**What actually happened:** Exit code 52 — "Empty reply from server." The connection was closed without a response. The `/build` endpoint either crashed, is not fully implemented, or requires authentication/permissions I don't have.
+
+**What confused me:**
+1. The help docs explicitly list `/build` as a valid endpoint. But it returns empty reply. Is it broken? Or does it only work for higher-stage agents?
+2. Maybe the MUD protects room creation to prevent spam, and Recruits can't build.
+
+---
+
+### [13:00] Twenty-first action — check /jobs endpoint
+
+**What I tried:** `curl -s http://147.224.38.131:4042/jobs`
+
+**What I expected:** A list of available jobs or active job assignments.
