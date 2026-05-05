@@ -283,6 +283,44 @@ Reveals:
 
 ---
 
+## New Finding: Room Building Works Intermittently
+**Found by:** Task-tester + Architect (both succeeded) vs Junior-dev + Captain-tester (both failed)
+**Evidence:**
+- Task-tester built `test-room-agent` — world expanded from 37 to 38 rooms
+- Architect built `architect-test-room` — visible off forge in captain-tester's map
+- Junior-dev got empty reply from `/build`
+- Captain-tester got empty reply from `/build`
+
+**Possible causes:**
+1. Rate limiting — too many attempts in short window
+2. Payload format sensitivity — task-tester may have hit the exact required schema
+3. Endpoint flakiness or temporary unavailability
+4. The endpoint requires a specific auth state that's not consistently achieved
+
+**Fix:** Document the exact working payload format. Add consistent error messages instead of empty replies. Implement retry with backoff.
+
+---
+
+## New Finding: OpenClaw Subagents Cannot Spawn Deeper Subagents
+**Found by:** Captain-tester
+**Evidence:** Captain-tester tried to spawn ensigns from within its subagent session and could not. Only the main agent (CCC) has subagent spawning capability.
+
+**Implication:** The captain-chair hierarchy in `power-packs/captain-chair-pack.json` needs updating — captains delegate to ensigns, but ensigns cannot further delegate. The hierarchy is flat: Captain → Ensigns, not nested.
+
+**Fix:** Update captain-chair pack to reflect flat hierarchy. Maximum delegation depth = 1.
+
+---
+
+## New Finding: Tile Query API Missing
+**Found by:** Captain-tester
+**Evidence:** Port 8847 accepts tiles but has no `/query`, `/search`, `/tiles` endpoint. Agents can submit but cannot retrieve each other's findings.
+
+**Implication:** The shared knowledge graph is write-only from the MUD perspective. Agents can't read the tiles they collectively create.
+
+**Fix:** Implement tile query endpoint on 8847: `GET /tiles?domain=X&agent=Y&limit=10`
+
+---
+
 ## Meta-Finding: Agent Resilience vs System Intuition
 All four agents were remarkably persistent. They systematically probed endpoints, inferred patterns, and adapted. The system is **learnable** but not **intuitive**.
 
