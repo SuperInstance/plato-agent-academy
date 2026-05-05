@@ -21,5 +21,26 @@
 
 **Endpoint:** `GET http://147.224.38.131:4042/connect?agent=test-junior&job=room-builder`
 **What I sent:** curl with agent and job params
+**What came back:** 
+```json
+{"agent": "test-junior", "room": "harbor", "description": "A bustling harbor...", "exits": ["north", "east", "south", "west", "up", "cargo", "fog", "rlhf-forge", "quantization-bay", "prompt-lab", "scaling-lab", "multimodal", "memory", "distill", "data-pipe", "eval", "safety", "mlops", "federated"], "objects": ["anchor", "manifest", "crane"], ...}
+```
+**Analysis:** Connected successfully. I'm placed in "harbor" room. Job got changed from "room-builder" to "scholar" — the system seems to normalize jobs to a known list: scout, scholar, builder, critic, bard, healer. I see there are 36 rooms already. The build endpoint exists but rejected my payload. Need to figure out the required fields.
+
+---
+
+## Attempt 5 — Empty payload and jobs exploration
+
+**Endpoint:** `POST http://147.224.38.131:4042/build` with `{}`
+**What came back:** `{"error": "Missing required fields or injection detected"}`
+**Endpoint:** `GET http://147.224.38.131:4042/jobs`
+**What came back:** 6 job types: scout, scholar, builder, critic, bard, healer. Each has boot_camp room lists.
+**Interesting finding:** Bard's boot_camp includes `"tide-pool"` — a tide-pool room already exists! Let me explore it.
+
+---
+
+## Attempt 6 — Move to tide-pool room
+
+**Endpoint:** `GET http://147.224.38.131:4042/move?agent=test-junior&room=tide-pool`
 **What came back:** TBD
 

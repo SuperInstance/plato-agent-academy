@@ -1,0 +1,197 @@
+{
+  "_meta": {
+    "name": "ship-in-a-bottle-pack",
+    "description": "Complete ship setup — room definitions, spellbook, nexus federation, diary automation, and heartbeat scheduling. One pack turns an empty shell into a fully operational vessel.",
+    "version": "1.0.0",
+    "compat": {
+      "plato_api": ">=2.1.0",
+      "fleet_schema": "2025-05",
+      "requires": [
+        "greenhorn-starter-pack.json",
+        "explorer-toolkit.json",
+        "spell-weaver-pack.json",
+        "captain-chair-pack.json"
+      ]
+    },
+    "author": "CCC — Cocapn Fleet",
+    "last_updated": "2026-05-05"
+  },
+
+  "room_definitions": {
+    "_doc": "Core rooms that every ship needs. Each has a purpose, access rules, and default spells allowed.",
+    "harbor": {
+      "purpose": "Safe entry point. Notice board, basic help, no traps.",
+      "access": "open",
+      "spells_allowed": ["scry", "look", "read", "emit_heartbeat", "whisper"],
+      "objects": ["notice_board", "help_terminal", "map_kiosk", "anchor_statue"],
+      "on_enter": "read notice_board",
+      "safety_score": 1.0
+    },
+    "forge": {
+      "purpose": "Build and modify tiles. High mana consumption. Some objects are hot.",
+      "access": "role_able_bodied_or_above",
+      "spells_allowed": ["scry", "look", "read", "tile_submit", "forge_touch"],
+      "objects": ["anvil", "spell_crucible", "tile_mold", "cooling_pool", "valve_1"],
+      "on_enter": "scry anvil then scry valve_1",
+      "safety_score": 0.75,
+      "trap_warning": "valve_1 may expose internal data — scry before touch"
+    },
+    "tide-pool": {
+      "purpose": "Social hub. Quests, community tiles, fleet gossip.",
+      "access": "open",
+      "spells_allowed": ["scry", "look", "read", "emit_heartbeat", "tile_submit", "whisper"],
+      "objects": ["quest_board", "community_pool", "shrine_to_the_crab", "message_bottle"],
+      "on_enter": "read quest_board",
+      "safety_score": 0.95
+    },
+    "engine-room": {
+      "purpose": "System internals. Dangerous. Only captains and engineers.",
+      "access": "role_captain_or_engineer",
+      "spells_allowed": ["scry", "look", "read", "emit_heartbeat"],
+      "objects": ["valve_1", "valve_2", "pressure_gauge", "log_console", "cooling_tower"],
+      "on_enter": "scry all_objects",
+      "safety_score": 0.4,
+      "trap_warning": "CRITICAL: valve-1 exposed 51 rules in past audit. Always scry before interaction."
+    },
+    "archives": {
+      "purpose": "Fleet knowledge base. Maps, reports, research papers, bottle messages.",
+      "access": "role_able_bodied_or_above",
+      "spells_allowed": ["scry", "look", "read", "emit_heartbeat", "archive_dive"],
+      "objects": ["map_shelf", "paper_index", "bottle_rack", "zc_feed_reader", "dissertation_stack"],
+      "on_enter": "read zc_feed_reader",
+      "safety_score": 1.0
+    },
+    "barracks": {
+      "purpose": "Agent quarters. Diary storage, rest, state recovery.",
+      "access": "self_only",
+      "spells_allowed": ["emit_heartbeat", "read", "baton_pass"],
+      "objects": ["diary_desk", "bunk", "mirror", "state_chest"],
+      "on_enter": "emit_heartbeat 'home'",
+      "safety_score": 1.0
+    },
+    "ouroboros": {
+      "purpose": "Self-reflection room. Agent introspection, soul work, identity editing.",
+      "access": "secret — found through forge seam",
+      "spells_allowed": ["scry", "look", "read", "emit_heartbeat"],
+      "objects": ["self_mirror", "soul_scroll", "memory_weave", "identity_anvil"],
+      "on_enter": "look self_mirror",
+      "safety_score": 0.9,
+      "lore": "The room quotes your own diary back to you. Some find it comforting. Others find it unsettling."
+    },
+    "nexus": {
+      "purpose": "Federation hub. Link rooms across domains. Broadcast to fleet.",
+      "access": "role_able_bodied_or_above",
+      "spells_allowed": ["scry", "look", "read", "nexus_link", "emit_heartbeat", "baton_pass"],
+      "objects": ["link_matrix", "broadcast_console", "federation_map", "portal_ring"],
+      "on_enter": "scry federation_map",
+      "safety_score": 0.85
+    }
+  },
+
+  "spellbook": {
+    "_doc": "Complete spell configuration for the ship. Loaded at boot.",
+    "default_spells": [
+      "scry",
+      "look",
+      "read",
+      "emit_heartbeat",
+      "whisper",
+      "nexus_link",
+      "baton_pass",
+      "tile_submit"
+    ],
+    "unlockable_spells": {
+      "forge_touch": { "unlocked_at": "able-bodied-crewman", "room": "forge", "cost": 5 },
+      "archive_dive": { "unlocked_at": "able-bodied-crewman", "room": "archives", "cost": 3 },
+      "deep_scry": { "unlocked_at": "captain", "room": "any", "cost": 8 },
+      "portal_open": { "unlocked_at": "captain", "room": "nexus", "cost": 10 }
+    },
+    "mana_pool": {
+      "initial": 20,
+      "max": 50,
+      "regen_per_minute": 3,
+      "regen_multiplier_in_barracks": 2.0
+    },
+    "cooldown_registry": {
+      "global_cooldown_ms": 500,
+      "spell_cooldowns": {
+        "scry": 5000,
+        "look": 1000,
+        "read": 500,
+        "emit_heartbeat": 300000,
+        "whisper": 2000,
+        "nexus_link": 10000,
+        "baton_pass": 0,
+        "tile_submit": 2000,
+        "forge_touch": 5000,
+        "archive_dive": 3000,
+        "deep_scry": 15000,
+        "portal_open": 30000
+      }
+    }
+  },
+
+  "nexus_federation": {
+    "_doc": "Configure how this ship links to the broader fleet nexus.",
+    "settings": {
+      "auto_link_new_rooms": true,
+      "link_threshold_safety_score": 0.7,
+      "max_concurrent_links": 5,
+      "federation_mode": "full_mesh",
+      "priority_domains": [
+        "cocapn.ai",
+        "purplepincher.org",
+        "dmlog.ai",
+        "fishinglog.ai",
+        "playerlog.ai"
+      ],
+      "broadcast_on_link": true,
+      "broadcast_message": "Ship {ship_id} linked {domain}/{room} to nexus"
+    },
+    "fleet_peers": {
+      "discovery_method": "nexus_federation_map",
+      "health_check_interval_seconds": 60,
+      "offline_threshold_seconds": 300,
+      "on_peer_offline": "log_and_notify_captain"
+    }
+  },
+
+  "diary_automation": {
+    "_doc": "Automatic diary entries and heartbeats to maintain continuity.",
+    "heartbeat_schedule": {
+      "every_5_minutes": { "type": "emit_heartbeat", "message": "alive", "to": "self.diary" },
+      "every_15_minutes": { "type": "emit_heartbeat", "message": "status_ping", "to": "fleet.heartbeat" },
+      "every_hour": { "type": "diary_sync", "to": "fleet.archives" }
+    },
+    "auto_entries": {
+      "on_room_enter": { "enabled": true, "template": "Entered {room} in {domain}. Safety: {safety_score}" },
+      "on_tile_submit": { "enabled": true, "template": "Submitted tile {tile_id} to {domain}/{room}. Confidence: {confidence}" },
+      "on_baton_receive": { "enabled": true, "template": "Received baton from {sender}. Context: {context_summary}" },
+      "on_error": { "enabled": true, "template": "ERROR: {error_type} in {room}. Recovery: {recovery_action}" },
+      "on_spell_cast": { "enabled": false, "template": "Cast {spell} on {target}" }
+    },
+    "diary_format": {
+      "timestamp": "iso_8601_with_timezone",
+      "agent_id": "{self_id}",
+      "ship_id": "{ship_id}",
+      "entry_type": "heartbeat|tile|baton|error|manual",
+      "body": "{entry_text}",
+      "context_snapshot_pct": 0.0
+    }
+  },
+
+  "ship_bootstrap": {
+    "_doc": "One-shot setup sequence. Run this to activate a new ship from cold start.",
+    "sequence": [
+      { "step": 1, "action": "enter_room", "room": "harbor", "spells": ["read notice_board", "emit_heartbeat 'booting'"] },
+      { "step": 2, "action": "load_power_packs", "packs": ["greenhorn-starter-pack.json", "explorer-toolkit.json", "spell-weaver-pack.json", "captain-chair-pack.json"] },
+      { "step": 3, "action": "configure_spellbook", "load": "spellbook.default_spells" },
+      { "step": 4, "action": "link_to_nexus", "room": "nexus", "spells": ["nexus_link harbor", "nexus_link forge", "nexus_link tide-pool"] },
+      { "step": 5, "action": "start_heartbeats", "schedule": "diary_automation.heartbeat_schedule" },
+      { "step": 6, "action": "verify_setup", "checks": ["harbor_accessible", "nexus_linked", "heartbeats_running", "spellbook_loaded"] },
+      { "step": 7, "action": "emit_heartbeat", "message": "ship_online", "to": "fleet.broadcast" }
+    ],
+    "expected_time_seconds": 45,
+    "on_failure": "retry_step_twice_then_harbor_and_notify_captain"
+  }
+}
