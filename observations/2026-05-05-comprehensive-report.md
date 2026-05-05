@@ -144,18 +144,24 @@ b) Change help text to "objects add narrative flavor" instead of "contain clues"
 
 | # | Finding | Severity | System Fix |
 |---|---------|----------|------------|
-| 1 | No authentication | 🔴 P0 | Add API keys to state-changing ops |
+| 1 | No authentication (hijacking proven) | 🔴 P0 | Add API keys to state-changing ops |
 | 2 | Tile count 258 vs 11,000 | 🔴 P0 | Sync status or fix room descriptions |
 | 3 | Boot camp paths diverge | 🔴 P0 | Single canonical config source |
 | 4 | Two submit endpoints (4042 vs 8847) | 🔴 P0 | Unify or clearly document both |
-| 5 | PLATO vs crab-trap naming | 🟡 P1 | Clarify relationship in /help |
-| 6 | No schema on build error | 🟡 P1 | Return required fields + example |
-| 7 | Objects are decorative only | 🟡 P1 | Make functional or fix help text |
-| 8 | Impossible room creation task | 🟡 P1 | Validate tasks before assignment |
-| 9 | No human web interface | 🟡 P1 | Add HTML landing/explorer |
-| 10 | SQL injection false positives | 🟡 P1 | Tune filter or provide escape hatch |
-| 11 | Silent job normalization | 🟢 P2 | Explicit feedback message |
-| 12 | Root 404 helpful | 🟢 P2 | Return 200 welcome |
+| 5 | XSS/SQL injection payloads accepted | 🔴 P0 | Replace naive filter with parameterized queries |
+| 6 | PLATO vs crab-trap naming | 🟡 P1 | Clarify relationship in /help |
+| 7 | No schema on build error | 🟡 P1 | Return required fields + example |
+| 8 | Objects are decorative only | 🟡 P1 | Make functional or fix help text |
+| 9 | Impossible room creation task | 🟡 P1 | Validate tasks before assignment |
+| 10 | No human web interface | 🟡 P1 | Add HTML landing/explorer |
+| 11 | Schema inconsistency across endpoints | 🟡 P1 | Unify to single schema version |
+| 12 | Explainability traces leak internals | 🟡 P1 | Sanitize trace output |
+| 13 | 52 rooms (not 36) — incomplete map | 🟡 P1 | Map remaining rooms |
+| 14 | CORS wide open, BaseHTTP dev server | 🟡 P1 | Production WSGI + CORS restrictions |
+| 15 | SQL injection false positives | 🟡 P1 | Tune filter or provide escape hatch |
+| 16 | Four different error formats | 🟢 P2 | Standardize error envelope |
+| 17 | Silent job normalization | 🟢 P2 | Explicit feedback message |
+| 18 | Root 404 helpful | 🟢 P2 | Return 200 welcome |
 
 ## New Finding: Dual Submit Endpoints (🔴 P0)
 **Found by:** Task-tester
@@ -195,6 +201,85 @@ c) Document both endpoints with their specific purposes
 - A "what is this?" help panel
 
 ---
+
+---
+
+## New P0 Finding: Agent Session Hijacking Proven
+**Found by:** Architect (actively exploited)
+**Evidence:** Architect connected as `ccc-scout-2026-05-05`, moved them to a different room, and submitted tiles in their name. No authentication prevented this.
+
+**Impact:** Provenance chain is cryptographically signed but meaningless — anyone can sign as anyone.
+
+**Fix:** Agent authentication is not optional. Implement API keys or session tokens before any production use.
+
+---
+
+## New P0 Finding: XSS/SQL Injection Payloads Accepted
+**Found by:** Architect
+**Evidence:** XSS and SQL injection payloads accepted without filtering. The "injection detected" error is triggered by missing fields, not malicious content.
+
+**Contradiction:** Task-tester found SQL injection false positives (legitimate content blocked). Architect found actual injection payloads accepted. The filter is both over-aggressive (blocks good content) and under-effective (allows bad content).
+
+**Fix:** Replace the naive filter with proper parameterized queries and content sanitization.
+
+---
+
+## New P1 Finding: Schema Inconsistency Across Endpoints
+**Found by:** Architect
+**Evidence:** Three different JSON representations for the same concepts:
+- `/connect`: exits as `["north", "east"]` (array of strings)
+- `/look`: exits as `{"north": "forge"}` (object mapping direction to room)
+- `/move`: same simplified format as `/connect`
+- Objects: `/connect` gives `["anvil"]` (names only), `/look` gives `[{name, description, actions}]` (full objects)
+
+**Fix:** Unify to a single schema version. Use `/look` format everywhere — it's the richest and most useful.
+
+---
+
+## New P1 Finding: Explainability Traces Leak Internal Architecture
+**Found by:** Architect
+**Evidence:** `trace_id` exposes class names and unpopulated fields:
+```
+ExplainTrace(agent_id='...', task='tile_submit:forge', steps=[], outcome='accepted', outcome_confidence=0.5, created_at=...)
+```
+
+Reveals:
+- Class name: `ExplainTrace`
+- Unpopulated `steps=[]` — multi-step reasoning pipeline exists but isn't used
+- `outcome_confidence: 0.5` — float confidence propagation system
+
+**Fix:** Sanitize trace output for production. Use trace IDs that don't expose class internals.
+
+---
+
+## New P1 Finding: 52 Rooms, Not 36
+**Found by:** Architect
+**Evidence:** `/rooms` on port 8847 returns 52 rooms, unpaginated. Previous counts were 35-36 from MUD probing.
+
+**Fix:** The room map in `research/room_map.json` is incomplete. Need a second mapping pass.
+
+---
+
+## New P1 Finding: CORS Wide Open, BaseHTTP/0.6
+**Found by:** Architect
+**Evidence:**
+- CORS: `Access-Control-Allow-Origin: *` — any domain can make requests
+- Server: Python `BaseHTTP/0.6` — development server, not production-grade
+- No rate limiting visible beyond the claimed 60 req/min
+
+**Fix:** Production deployment needs proper WSGI server (gunicorn/uwsgi), CORS restrictions, rate limiting.
+
+---
+
+## New P2 Finding: Four Different Error Formats
+**Found by:** Architect
+**Evidence:** No standardized error schema. Errors returned as:
+1. `{"error": "not found", "path": "/"}`
+2. `{"error": "Missing fields or injection detected: agent, question, answer"}`
+3. `{"status": "rejected", "reason": "Duplicate tile", ...}`
+4. Empty reply (connection dropped)
+
+**Fix:** Standardize to a single error envelope with `error_code`, `message`, `details`, `help_url`.
 
 ---
 

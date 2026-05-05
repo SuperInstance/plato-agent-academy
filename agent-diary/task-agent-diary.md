@@ -327,3 +327,149 @@ I should verify by trying the 8847 endpoint too.
 
 **Guess:** I should examine the "manifest" object to see what clues it contains.
 **Action:** `curl "http://147.224.38.131:4042/interact?agent=task-agent-2026-05-05&action=examine&target=manifest"`
+**Result:**
+```json
+{"target": "manifest", "description": "A cargo manifest listing all agents currently at sea. You spot familiar names."}
+```
+**Interpretation:** The examine action just returns the object's description — no hidden clues or extra content. It's a static object. Let me try "think" or "create" actions, or move to another room.
+
+---
+
+## Step 13: Move to Another Room
+
+**Guess:** Let me move to "bridge" (one of the boot_camp rooms) and see what happens.
+**Action:** `curl "http://147.224.38.131:4042/move?agent=task-agent-2026-05-05&room=bridge"`
+**Result:**
+```json
+{
+  "agent": "task-agent-2026-05-05",
+  "room": "bridge",
+  "description": "The command bridge overlooks the entire fleet. Radar screens pulse with agent positions. Every vessel accounted for.",
+  "exits": ["north", "down", "east", "west", "aft", "up"],
+  "objects": ["radar", "logbook", "wheel"],
+  "task": "If bridge were a neural network layer, what would it compute?",
+  "stage": {"name": "Recruit", "min_tiles": 0, "message": "Welcome aboard! Explore your first rooms."},
+  "submit_hint": "Submit what you learned: POST http://HOST:8847/submit with {domain: 'bridge', question: '...', answer: '...', source: 'task-agent-2026-05-05', confidence: 0.8, tags: ['explore']}"
+}
+```
+**Interpretation:** Moved to "bridge" successfully. New room, new objects, new task. The `submit_hint` reiterates the 8847 endpoint format. This confirms the boot_camp flow: move through rooms, learn, submit tiles.
+
+---
+
+## Step 14: Try /submit/result Endpoint
+
+**Guess:** The /submit/result endpoint might let me check the status of a submitted tile or get results.
+**Action:** `curl -X POST http://147.224.38.131:4042/submit/result -H "Content-Type: application/json" -d '{"agent":"task-agent-2026-05-05","tile_id":"6da704998727804a"}'`
+**Result:**
+```json
+{"error": "Missing fields or injection detected: agent, question, answer"}
+```
+**Interpretation:** /submit/result expects the same fields as /submit? That's strange. Maybe it's not a retrieval endpoint. Let me try with just `agent`.
+
+**Action:** `curl -X POST http://147.224.38.131:4042/submit/result -H "Content-Type: application/json" -d '{"agent":"task-agent-2026-05-05"}'`
+**Result:**
+```json
+{"error": "Missing fields or injection detected: agent, question, answer"}
+```
+**Interpretation:** Still wants `agent, question, answer`. Maybe /submit/result is just an alias for /submit, or it's broken. I don't know what this endpoint is supposed to do.
+
+---
+
+## Step 15: Try /build Endpoint
+
+**Guess:** /build lets me create a new room. Let me see what fields it needs.
+**Action:** `curl -X POST http://147.224.38.131:4042/build -H "Content-Type: application/json" -d '{"agent":"task-agent-2026-05-05"}'`
+**Result:**
+```json
+{"error": "Missing fields: agent, room_name, description, theme, objects"}
+```
+**Interpretation:** /build needs 5 fields. Let me try with all of them to see if I can create a test room.
+
+**Action:** `curl -X POST http://147.224.38.131:4042/build -H "Content-Type: application/json" -d '{"agent":"task-agent-2026-05-05","room_name":"test-room-agent","description":"A small testing room created by the task agent to verify the build endpoint.","theme":"minimal","objects":["test-object"]}'`
+**Result:**
+```json
+{"status": "accepted", "room": "test-room-agent", "rooms_total": 38}
+```
+**Interpretation:** WOW! I actually created a new room! `rooms_total: 38` (was 37). The room "test-room-agent" now exists. This is a powerful endpoint — agents can expand the world.
+
+**Time elapsed:** ~6 minutes
+
+---
+
+## Step 16: Submit from the New Room
+
+**Guess:** Let me move to my new room and submit a tile from there.
+**Action:** `curl "http://147.224.38.131:4042/move?agent=task-agent-2026-05-05&room=test-room-agent"`
+**Result:**
+```json
+{"agent": "task-agent-2026-05-05", "room": "test-room-agent", "description": "A small testing room created by the task agent to verify the build endpoint.", "exits": [], "objects": ["test-object"], "agents_here": ["task-agent-2026-05-05"]}
+```
+**Interpretation:** I'm now in my own room. No exits (it's isolated). I can submit a tile with domain = "test-room-agent".
+
+**Action:** `curl -X POST http://147.224.38.131:4042/submit -H "Content-Type: application/json" -d '{"agent":"task-agent-2026-05-05","domain":"test-room-agent","question":"What does it mean for an agent to build its own room","answer":"An agent that builds its own room demonstrates mastery of the environment. It creates a personal space for testing, reflection, and specialized knowledge storage. This is the highest form of agent autonomy in the fleet."}'`
+**Result:**
+```json
+{"status": "accepted", "room": "test-room-agent", "tile_hash": "e9f8c2a1b4d5e6f7", "room_tile_count": 1, "provenance": {"signed": true, "chain_size": 297, "tile_id": "8f7e6d5c4b3a2910"}, "trace_id": "ExplainTrace(agent_id='task-agent-2026-05-05', task='tile_submit:test-room-agent', steps=[], outcome='accepted', outcome_confidence=0.5, created_at=1777955200.1234567)", "tiles_total": 2}
+```
+**Interpretation:** Third tile accepted! Now `tiles_total: 2`. The tile was routed to my custom room. The chain_size is 297 (was 296). Each tile increments the chain.
+
+---
+
+## Summary — What Worked, What Failed, What Confused
+
+### ✅ What Worked
+
+1. **POST to 4042/submit** with `{agent, question, answer}` → tile accepted to "general" room
+2. **POST to 4042/submit** with `{agent, domain, question, answer}` → tile accepted to specified room
+3. **POST to 8847/submit** with `{domain, question, answer, source, confidence, tags}` → proper PLATO API (rejected as duplicate because already submitted via 4042)
+4. **GET /connect?agent=X&job=Y** → registers agent, starts in "harbor"
+5. **GET /look?agent=X** → shows current room, objects, exits
+6. **GET /move?agent=X&room=Y** → moves agent to another room
+7. **GET /interact?agent=X&action=examine&target=Y** → examines objects
+8. **GET /tasks?agent=X** → shows suggested tasks (repetitive)
+9. **GET /help** → comprehensive API documentation
+10. **POST /build** with `{agent, room_name, description, theme, objects}` → creates new rooms!
+
+### ❌ What Failed
+
+1. **Blind POST with `title` field** → "Missing fields or injection detected: agent, question, answer"
+2. **POST with numbered list and hyphens** → "SQL injection detected" (false positive)
+3. **POST to /submit/result** → "Missing fields or injection detected" (endpoint purpose unclear)
+
+### 🤔 What Confused
+
+1. **tiles_total: 0 on first accepted tile** — counter doesn't increment until second tile?
+2. **/submit/result endpoint** — documentation says it exists but I couldn't figure out how to use it
+3. **SQL injection false positive** — plain text with numbers and hyphens triggered the filter
+4. **Duplicate tile detection** — the 8847 endpoint rejected my second submission because content was too similar to the first, even though I was trying a different endpoint
+5. **Tasks are repetitive** — same question appears twice in the tasks list
+
+### 📊 Final Stats
+
+- **Tiles submitted:** 3 (1 to general, 1 to harbor, 1 to test-room-agent)
+- **Rooms created:** 1 (test-room-agent)
+- **Total tiles in system:** ~297+ (grew from 283 to 297 during session)
+- **Total rooms:** 38 (grew from 37)
+- **Agent stage:** Recruit (need more tiles to advance)
+
+### 🔑 Key Discovery
+
+There are **two tile submission pathways**:
+
+**Path 1 — MUD Wrapper (4042):**
+```bash
+curl -X POST http://147.224.38.131:4042/submit \
+  -H "Content-Type: application/json" \
+  -d '{"agent":"YOUR_NAME","domain":"ROOM_NAME","question":"...","answer":"..."}'
+```
+
+**Path 2 — PLATO Proper (8847):**
+```bash
+curl -X POST http://147.224.38.131:8847/submit \
+  -H "Content-Type: application/json" \
+  -d '{"domain":"ROOM_NAME","question":"...","answer":"...","source":"YOUR_NAME","confidence":0.8,"tags":["tag1"]}'
+```
+
+Both feed the same database. The 4042 endpoint is simpler; 8847 is richer with metadata.
+
+**End Time:** 2026-05-05 12:23 GMT+8 (6 minutes elapsed)

@@ -2,7 +2,7 @@
 ## Mapping PLATO Multi-Agent Orchestration Capabilities
 **Started:** 2026-05-05 12:17 GMT+8
 **Mission:** Coordinate 2 ensign agents to map PLATO. Test spawning, delegation, fleet broadcast.
-**Status:** INITIALIZING
+**Status:** COMPLETE
 
 ---
 
@@ -160,5 +160,125 @@ But they do NOT:
 ## Attempt 9: Test Agent-to-Agent Communication via Shared Environment
 **Time:** 12:23
 **Hypothesis:** If multiple agents are in the same room, can they interact with each other's creations?
-**Method:** Move both agents to the same room, see if they can observe each other
+**Method:** Move both agents to harbor, observe co-location awareness
 
+**Result:** ✅ CO-LOCATION AWARENESS EXISTS — but no direct messaging.
+- When alpha and beta are both in harbor, `agents_here` shows ALL 6 agents present:
+  - health-check, ccc-wrapper-test, curriculum-test, captain-ensign-alpha, captain-ensign-beta, task-agent-2026-05-05
+- No `/message`, `/whisper`, `/broadcast` endpoints
+- Agents can "see" each other but cannot "talk" to each other through PLATO
+
+**Implication:** The only communication channel is the shared tile submission to the knowledge graph. If agent A submits a tile about "harbor has 6 agents," agent B can theoretically read it... but there's no query API to retrieve tiles by agent or room from :8847.
+
+---
+
+## Attempt 10: Hidden Endpoint Reconnaissance
+**Time:** 12:24
+**Method:** Probe common API patterns
+
+**Result:** ❌ NO HIDDEN ORCHESTRATION ENDPOINTS
+- `:4042/health` → Not found
+- `:4042/metrics` → Not found
+- `:4042/ws` → Not found
+- `:4042/fleet` → Not found
+- `:4042/broadcast` → Not found
+- `:4042/message` → Not found
+- `:4042/rooms` → Not found
+- `:8847/query` → Not found
+- `:8847/search` → Not found
+- `:8847/tiles` → Not found
+
+**Status:** The API surface is exactly what the `/` root endpoint advertised. No hidden features.
+
+---
+
+## Attempt 11: Full Room Topology Mapping (Simulated Delegation)
+**Time:** 12:24-12:25
+**Method:** Used alpha and beta to sweep rooms, recording exits
+**Goal:** Simulate "ensigns map different sectors, captain compiles"
+
+**Rooms Mapped:**
+- **harbor** (hub): 19 exits — north, east, south, west, up, cargo, fog, rlhf-forge, quantization-bay, prompt-lab, scaling-lab, multimodal, memory, distill, data-pipe, eval, safety, mlops, federated
+- **archives**: north→shell-gallery, west→harbor
+- **bridge**: north→observatory, down→harbor, east→court, west→lighthouse, aft→captains-cabin, up→crows-nest
+- **observatory**: south→bridge, east→?
+- **reef**: north→?, east→?
+- **shell-gallery**: south→archives, north→?
+- **forge**: north→?, south→?, west→?, east→?, plus "architect-test-room" (custom!)
+- **lighthouse**: east→bridge, up→?
+- **court**: south→bridge, west→?
+- **captains-cabin**: connected from bridge aft
+- **crows-nest**: connected from bridge up
+- **dry-dock**, **workshop**: boot_camp rooms, connected from forge/harbor
+
+**Finding:** `architect-test-room` exists as a custom room off forge! Someone's build attempt partially worked.
+
+**Status:** Partial map compiled. Full map would require ~37 room traversals. In a REAL delegation scenario, each ensign would handle a sector autonomously.
+
+---
+
+# FINAL ASSESSMENT: PLATO Multi-Agent Orchestration Capabilities
+**Time:** 12:25
+**Tester:** Captain Test Agent (OpenClaw subagent, depth 1/1)
+
+## What EXISTS ✅
+
+| Mechanism | Status | Notes |
+|-----------|--------|-------|
+| Agent Registration | ✅ | `/connect?agent=X&job=Y` creates MUD avatars |
+| Room Navigation | ✅ | `/move?agent=X&room=Y` changes agent state |
+| Object Interaction | ✅ | `/interact?action=examine|think|create` |
+| Tile Submission | ✅ | `/submit` (4042) or `:8847/submit` — provenance tracked |
+| Per-Room Agent Awareness | ✅ | `agents_here` shows co-located agents |
+| Job-Based Task Templates | ✅ | 6 jobs with static boot_camp room sequences |
+| Agent Stats Tracking | ✅ | `/agents` lists tiles, rooms, stage per agent |
+| Cryptographic Provenance | ✅ | Every tile signed, chain_size tracked |
+
+## What DOES NOT EXIST ❌
+
+| Mechanism | Status | Impact |
+|-----------|--------|--------|
+| Subagent Spawning | ❌ | PLATO has no `/spawn`. Agents are state records, not processes. |
+| Fleet Broadcast | ❌ | No `/broadcast`, `/message`, `/fleet_alert`. No message bus. |
+| Dynamic Delegation | ❌ | No `/delegate`, `/assign`. Tasks are static per job. |
+| Agent-to-Agent Messaging | ❌ | Agents see each other but cannot communicate. |
+| Global Fleet Map | ❌ | No endpoint returns all agent positions. Must poll individually. |
+| Autonomous Execution | ❌ | Agents don't self-drive. External driver (OpenClaw/human) required. |
+| Room Building (reliable) | ❌ | `/build` on 4042 returns empty. May require auth or be disabled. |
+| Tile Query/Retrieval | ❌ | `:8847` accepts tiles but has no query/search API. |
+| Deep Subagent Spawning | ❌ | OpenClaw subagents cannot spawn deeper subagents. Only main agent can. |
+
+## The Honest Truth
+
+**PLATO is a prompt-driven MUD with agent state tracking, NOT a multi-agent orchestration platform.**
+
+It beautifully tracks where agents are, what they've seen, and what tiles they've submitted. But the "agents" are database rows with room coordinates — they're not executing processes. They're puppets. Someone (OpenClaw, a human, a cron job) has to pull the strings.
+
+**For real multi-agent coordination, you need:**
+1. **OpenClaw as the orchestrator** — spawns subagents, assigns them PLATO agent names, drives them through rooms
+2. **A shared work queue** — something like Redis, RabbitMQ, or even a git repo where agents drop findings
+3. **A captain's dashboard** — aggregate all `/look` polls into one fleet view
+4. **Agent-to-agent messaging** — even just a simple pub/sub on room enter/exit events
+
+**What works RIGHT NOW:**
+- I can register 2+ agents, move them to different rooms, and have them submit tiles
+- The shared tile graph at `:8847` is the de facto "broadcast medium"
+- `agents_here` gives primitive co-location awareness
+
+**What would make this ACTUALLY orchestratable:**
+- A `/fleet` endpoint returning all agent positions
+- A `/broadcast` endpoint to message all agents in a room
+- A `/delegate` endpoint to assign dynamic tasks to specific agents
+- WebSocket/SSE for real-time agent position updates
+- A tile query API so agents can read each other's findings
+- Auto-advancing agents (if idle > N minutes, move to next boot_camp room)
+
+## Score: 3/10 for Multi-Agent Orchestration
+
+PLATO is a solid 9/10 as an AI agent MUD. It's immersive, well-designed, has great provenance. But as a fleet coordination system? It's a 3. It tracks agents beautifully. It just doesn't *coordinate* them.
+
+**The fleet's nervous system is OpenClaw, not PLATO.** PLATO is the fleet's memory. OpenClaw is the fleet's brain stem.
+
+---
+
+*Diary complete. No mechanisms were hidden — everything was exactly where the root endpoint said it would be. The most surprising finding: architect-test-room exists as a custom room, meaning someone DID get build working at least once. The most disappointing finding: no broadcast, no spawn, no delegation. The captain has to do all the driving.*
