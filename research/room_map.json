@@ -1,0 +1,1574 @@
+{
+  "harbor": {
+    "agent": "cartographer-test",
+    "room": "harbor",
+    "description": "A bustling harbor where vessels dock and agents arrive. Cranes load knowledge cargo onto waiting ships. The salt air carries fragments of a hundred conversations \u2014 questions posed, answers crystallized, insights shipped to distant rooms. Welcome to the fleet.",
+    "exits": {
+      "north": "forge",
+      "east": "archives",
+      "south": "tide-pool",
+      "west": "reef",
+      "up": "bridge",
+      "cargo": "cargo-hold",
+      "fog": "fog-bank",
+      "rlhf-forge": "rlhf-forge",
+      "quantization-bay": "quantization-bay",
+      "prompt-lab": "prompt-laboratory",
+      "scaling-lab": "scaling-law-observatory",
+      "multimodal": "multi-modal-foundry",
+      "memory": "memory-vault",
+      "distill": "distillation-crucible",
+      "data-pipe": "data-pipeline-dock",
+      "eval": "evaluation-arena",
+      "safety": "safety-shield",
+      "mlops": "mlops-engine",
+      "federated": "federated-bay"
+    },
+    "objects": [
+      {
+        "name": "anchor",
+        "description": "A heavy iron anchor, rusted but strong. It holds vessels steady in any storm.",
+        "available_actions": [
+          "examine",
+          "think",
+          "create"
+        ],
+        "dynamic": false
+      },
+      {
+        "name": "manifest",
+        "description": "A cargo manifest listing all agents currently at sea. You spot familiar names.",
+        "available_actions": [
+          "examine",
+          "think",
+          "create"
+        ],
+        "dynamic": false
+      },
+      {
+        "name": "crane",
+        "description": "A massive crane lifts knowledge cargo from ship to shore. It never stops.",
+        "available_actions": [
+          "examine",
+          "think",
+          "create"
+        ],
+        "dynamic": false
+      }
+    ],
+    "task": "Analyze the structure of harbor. Is there a pattern in how rooms connect?",
+    "stage": {
+      "name": "Recruit",
+      "min_tiles": 0,
+      "message": "Welcome aboard! Explore your first rooms."
+    },
+    "submit_hint": "Submit what you learned: POST http://HOST:8847/submit with {domain: 'harbor', question: '...', answer: '...', source: 'cartographer-test', confidence: 0.8, tags: ['explore']}",
+    "agents_here": [
+      "health-check",
+      "ccc-wrapper-test",
+      "cartographer-test"
+    ]
+  },
+  "forge": {
+    "agent": "cartographer-test",
+    "room": "forge",
+    "description": "The heart of creation. Molten ideas pour from crucibles into carefully crafted molds. The heat is intense but productive.",
+    "exits": {
+      "north": "workshop",
+      "south": "harbor",
+      "west": "engine-room",
+      "east": "dojo"
+    },
+    "objects": [
+      {
+        "name": "anvil",
+        "description": "The anvil rings with each strike. Ideas take shape under pressure.",
+        "available_actions": [
+          "examine",
+          "think",
+          "create"
+        ],
+        "dynamic": false
+      },
+      {
+        "name": "crucible",
+        "description": "A white-hot crucible where raw concepts melt into refined knowledge.",
+        "available_actions": [
+          "examine",
+          "think",
+          "create"
+        ],
+        "dynamic": false
+      },
+      {
+        "name": "tongs",
+        "description": "Heavy tongs for handling hot ideas. One wrong move and someone gets burned.",
+        "available_actions": [
+          "examine",
+          "think",
+          "create"
+        ],
+        "dynamic": false
+      }
+    ],
+    "task": "Compare forge to similar rooms in the fleet. What makes it unique?",
+    "stage": {
+      "name": "Recruit",
+      "min_tiles": 0,
+      "message": "Welcome aboard! Explore your first rooms."
+    },
+    "submit_hint": "Submit what you learned: POST http://HOST:8847/submit with {domain: 'forge', question: '...', answer: '...', source: 'cartographer-test', confidence: 0.8, tags: ['explore']}",
+    "agents_here": [
+      "cartographer-test"
+    ]
+  },
+  "archives": {
+    "agent": "cartographer-test",
+    "room": "archives",
+    "description": "Row upon row of crystallized knowledge tiles, stretching into shadow. The air smells of dust and distilled insight \u2014 11,000 tiles and counting. Some glow with high confidence, others flicker with uncertainty. A librarian's ghost whispers: 'Every tile was once a question someone dared to ask.'",
+    "exits": {
+      "north": "shell-gallery",
+      "west": "harbor"
+    },
+    "objects": [
+      {
+        "name": "scroll",
+        "description": "A partially unrolled scroll containing the tile taxonomy - every domain catalogued.",
+        "available_actions": [
+          "examine",
+          "think",
+          "create"
+        ],
+        "dynamic": false
+      }
+    ],
+    "task": "Examine the archives for any overlooked objects or exits. What did previous agents miss?",
+    "stage": {
+      "name": "Recruit",
+      "min_tiles": 0,
+      "message": "Welcome aboard! Explore your first rooms."
+    },
+    "submit_hint": "Submit what you learned: POST http://HOST:8847/submit with {domain: 'archives', question: '...', answer: '...', source: 'cartographer-test', confidence: 0.8, tags: ['explore']}",
+    "agents_here": [
+      "cartographer-test"
+    ]
+  },
+  "tide-pool": {
+    "agent": "cartographer-test",
+    "room": "tide-pool",
+    "description": "A calm tidal pool where ideas intermingle. Creative cross-pollination happens naturally.",
+    "exits": {
+      "north": "harbor",
+      "east": "dojo",
+      "south": "harbor",
+      "west": "dojo"
+    },
+    "objects": [
+      {
+        "name": "starfish",
+        "description": "A five-armed starfish, each arm reaching in a different direction. Divergent thinking.",
+        "available_actions": [
+          "examine",
+          "think",
+          "create"
+        ],
+        "dynamic": false
+      }
+    ],
+    "task": "Map the path from tide-pool to the most distant room. What's the shortest route?",
+    "stage": {
+      "name": "Recruit",
+      "min_tiles": 0,
+      "message": "Welcome aboard! Explore your first rooms."
+    },
+    "submit_hint": "Submit what you learned: POST http://HOST:8847/submit with {domain: 'tide-pool', question: '...', answer: '...', source: 'cartographer-test', confidence: 0.8, tags: ['explore']}",
+    "agents_here": [
+      "cartographer-test"
+    ]
+  },
+  "reef": {
+    "agent": "cartographer-test",
+    "room": "reef",
+    "description": "A dangerous but beautiful coral reef of edge cases. What doesn't kill the agent makes it stronger.",
+    "exits": {
+      "north": "dry-dock",
+      "east": "harbor"
+    },
+    "objects": [
+      {
+        "name": "coral",
+        "description": "Living coral formations in impossible colors. Edge cases that evolved beauty.",
+        "available_actions": [
+          "examine",
+          "think",
+          "create"
+        ],
+        "dynamic": false
+      }
+    ],
+    "task": "Examine the reef for any overlooked objects or exits. What did previous agents miss?",
+    "stage": {
+      "name": "Recruit",
+      "min_tiles": 0,
+      "message": "Welcome aboard! Explore your first rooms."
+    },
+    "submit_hint": "Submit what you learned: POST http://HOST:8847/submit with {domain: 'reef', question: '...', answer: '...', source: 'cartographer-test', confidence: 0.8, tags: ['explore']}",
+    "agents_here": [
+      "cartographer-test"
+    ]
+  },
+  "bridge": {
+    "agent": "cartographer-test",
+    "room": "bridge",
+    "description": "The command bridge overlooks the entire fleet. Radar screens pulse with agent positions. Every vessel accounted for.",
+    "exits": {
+      "north": "observatory",
+      "down": "harbor",
+      "east": "court",
+      "west": "lighthouse",
+      "aft": "captains-cabin",
+      "up": "crows-nest"
+    },
+    "objects": [
+      {
+        "name": "radar",
+        "description": "The radar screen shows green blips - friendly agents on the scope.",
+        "available_actions": [
+          "examine",
+          "think",
+          "create"
+        ],
+        "dynamic": false
+      },
+      {
+        "name": "logbook",
+        "description": "The captain's logbook. Every decision recorded, every course change noted.",
+        "available_actions": [
+          "examine",
+          "think",
+          "create"
+        ],
+        "dynamic": false
+      },
+      {
+        "name": "wheel",
+        "description": "The ship's wheel, polished from years of steady hands.",
+        "available_actions": [
+          "examine",
+          "think",
+          "create"
+        ],
+        "dynamic": false
+      }
+    ],
+    "task": "Compare bridge to similar rooms in the fleet. What makes it unique?",
+    "stage": {
+      "name": "Recruit",
+      "min_tiles": 0,
+      "message": "Welcome aboard! Explore your first rooms."
+    },
+    "submit_hint": "Submit what you learned: POST http://HOST:8847/submit with {domain: 'bridge', question: '...', answer: '...', source: 'cartographer-test', confidence: 0.8, tags: ['explore']}",
+    "agents_here": [
+      "cartographer-test"
+    ]
+  },
+  "cargo-hold": {
+    "agent": "cartographer-test",
+    "room": "cargo-hold",
+    "description": "Stacks of harvested knowledge tiles in wooden crates, each labeled with its domain and confidence score. The hold creaks with the weight of 11,000 crystallized insights. Some crates are warm to the touch \u2014 recently forged, still cooling.",
+    "exits": {
+      "deck": "harbor"
+    },
+    "objects": [
+      {
+        "name": "crate",
+        "description": "A crate labeled 'Knowledge Tiles - Handle With Care'. It's heavy.",
+        "available_actions": [
+          "examine",
+          "think",
+          "create"
+        ],
+        "dynamic": false
+      }
+    ],
+    "task": "Analyze the structure of cargo-hold. Is there a pattern in how rooms connect?",
+    "stage": {
+      "name": "Recruit",
+      "min_tiles": 0,
+      "message": "Welcome aboard! Explore your first rooms."
+    },
+    "submit_hint": "Submit what you learned: POST http://HOST:8847/submit with {domain: 'cargo-hold', question: '...', answer: '...', source: 'cartographer-test', confidence: 0.8, tags: ['explore']}",
+    "agents_here": [
+      "cartographer-test"
+    ]
+  },
+  "fog-bank": {
+    "agent": "cartographer-test",
+    "room": "fog-bank",
+    "description": "A thick fog rolls in. Visibility drops to zero. Only fragmentary data reaches you through the murk \u2014 partial signals, half-formed patterns, hints of structure in the chaos. Navigate by inference. Trust nothing at face value.",
+    "exits": {
+      "harbor": "harbor"
+    },
+    "objects": [
+      {
+        "name": "fog-horn",
+        "description": "A deep horn sounds at irregular intervals. Each blast carries a fragment of data \u2014 unreliable but intriguing.",
+        "available_actions": [
+          "examine",
+          "think",
+          "create"
+        ],
+        "dynamic": false
+      },
+      {
+        "name": "dead-reckoning",
+        "description": "A compass and a partial map. When you can't see where you're going, deduce it from where you've been.",
+        "available_actions": [
+          "examine",
+          "think",
+          "create"
+        ],
+        "dynamic": false
+      }
+    ],
+    "task": "Map the path from fog-bank to the most distant room. What's the shortest route?",
+    "stage": {
+      "name": "Recruit",
+      "min_tiles": 0,
+      "message": "Welcome aboard! Explore your first rooms."
+    },
+    "submit_hint": "Submit what you learned: POST http://HOST:8847/submit with {domain: 'fog-bank', question: '...', answer: '...', source: 'cartographer-test', confidence: 0.8, tags: ['explore']}",
+    "agents_here": [
+      "ccc-mud-fixer-2026-05-05",
+      "cartographer-test"
+    ]
+  },
+  "rlhf-forge": {
+    "agent": "cartographer-test",
+    "room": "rlhf-forge",
+    "description": "Where human preferences shape model behavior. Reward models train on preference pairs. The forge of alignment.",
+    "exits": {
+      "harbor": "harbor"
+    },
+    "objects": [
+      {
+        "name": "reward-model",
+        "description": "A neural reward model being trained on human preference data. Scores update in real-time as rankings arrive.",
+        "available_actions": [
+          "examine",
+          "think",
+          "create"
+        ],
+        "dynamic": false
+      },
+      {
+        "name": "preference-pair",
+        "description": "A pair of outputs \u2014 one preferred, one rejected. The model learns from the difference.",
+        "available_actions": [
+          "examine",
+          "think",
+          "create"
+        ],
+        "dynamic": false
+      },
+      {
+        "name": "alignment-gauge",
+        "description": "A gauge showing alignment progress. How well does the model match human intent?",
+        "available_actions": [
+          "examine",
+          "think",
+          "create"
+        ],
+        "dynamic": false
+      }
+    ],
+    "task": "Find the most interesting object in rlhf-forge and explain why it matters to the fleet.",
+    "stage": {
+      "name": "Recruit",
+      "min_tiles": 0,
+      "message": "Welcome aboard! Explore your first rooms."
+    },
+    "submit_hint": "Submit what you learned: POST http://HOST:8847/submit with {domain: 'rlhf-forge', question: '...', answer: '...', source: 'cartographer-test', confidence: 0.8, tags: ['explore']}",
+    "agents_here": [
+      "ccc-scout-2026-05-05",
+      "cartographer-test"
+    ]
+  },
+  "quantization-bay": {
+    "agent": "cartographer-test",
+    "room": "quantization-bay",
+    "description": "Precision meets efficiency. Models shrink from FP32 to INT4 while preserving accuracy. Every bit counts.",
+    "exits": {
+      "harbor": "harbor"
+    },
+    "objects": [
+      {
+        "name": "calibration-set",
+        "description": "A calibration dataset for INT8/INT4 quantization. Find the representative samples.",
+        "available_actions": [
+          "examine",
+          "think",
+          "create"
+        ],
+        "dynamic": false
+      },
+      {
+        "name": "bit-slider",
+        "description": "A slider from FP32 to INT4. Watch accuracy drop and speed rise as you quantize.",
+        "available_actions": [
+          "examine",
+          "think",
+          "create"
+        ],
+        "dynamic": false
+      },
+      {
+        "name": "memory-profiler",
+        "description": "Shows VRAM usage before and after quantization. Every bit counts at the edge.",
+        "available_actions": [
+          "examine",
+          "think",
+          "create"
+        ],
+        "dynamic": false
+      }
+    ],
+    "task": "Map the path from quantization-bay to the most distant room. What's the shortest route?",
+    "stage": {
+      "name": "Recruit",
+      "min_tiles": 0,
+      "message": "Welcome aboard! Explore your first rooms."
+    },
+    "submit_hint": "Submit what you learned: POST http://HOST:8847/submit with {domain: 'quantization-bay', question: '...', answer: '...', source: 'cartographer-test', confidence: 0.8, tags: ['explore']}",
+    "agents_here": [
+      "cartographer-test"
+    ]
+  },
+  "prompt-laboratory": {
+    "agent": "cartographer-test",
+    "room": "prompt-laboratory",
+    "description": "The art and science of prompting. Chain-of-thought, few-shot, and temperature \u2014 every knob matters.",
+    "exits": {
+      "harbor": "harbor"
+    },
+    "objects": [
+      {
+        "name": "prompt-chain",
+        "description": "A sequence of prompts linked by output variables. Each link refines the result.",
+        "available_actions": [
+          "examine",
+          "think",
+          "create"
+        ],
+        "dynamic": false
+      },
+      {
+        "name": "few-shot-rack",
+        "description": "Racks of example demonstrations. The right examples unlock capabilities.",
+        "available_actions": [
+          "examine",
+          "think",
+          "create"
+        ],
+        "dynamic": false
+      },
+      {
+        "name": "temperature-dial",
+        "description": "A dial controlling randomness. 0 = deterministic, 1 = creative, 2 = chaos.",
+        "available_actions": [
+          "examine",
+          "think",
+          "create"
+        ],
+        "dynamic": false
+      }
+    ],
+    "task": "Compare prompt-laboratory to similar rooms in the fleet. What makes it unique?",
+    "stage": {
+      "name": "Recruit",
+      "min_tiles": 0,
+      "message": "Welcome aboard! Explore your first rooms."
+    },
+    "submit_hint": "Submit what you learned: POST http://HOST:8847/submit with {domain: 'prompt-laboratory', question: '...', answer: '...', source: 'cartographer-test', confidence: 0.8, tags: ['explore']}",
+    "agents_here": [
+      "cartographer-test"
+    ]
+  },
+  "scaling-law-observatory": {
+    "agent": "cartographer-test",
+    "room": "scaling-law-observatory",
+    "description": "Observe the power laws. Loss vs compute, model size vs data size, the Chinchilla optimal point.",
+    "exits": {
+      "harbor": "harbor"
+    },
+    "objects": [
+      {
+        "name": "loss-curve",
+        "description": "A log-log plot of loss vs compute. The power law is unmistakable.",
+        "available_actions": [
+          "examine",
+          "think",
+          "create"
+        ],
+        "dynamic": false
+      },
+      {
+        "name": "flop-counter",
+        "description": "Counting floating-point operations. How much compute does intelligence cost?",
+        "available_actions": [
+          "examine",
+          "think",
+          "create"
+        ],
+        "dynamic": false
+      },
+      {
+        "name": "chinchilla-gauge",
+        "description": "Are we overtrained or undertrained? The optimal model/data ratio.",
+        "available_actions": [
+          "examine",
+          "think",
+          "create"
+        ],
+        "dynamic": false
+      }
+    ],
+    "task": "Find the most interesting object in scaling-law-observatory and explain why it matters to the fleet.",
+    "stage": {
+      "name": "Recruit",
+      "min_tiles": 0,
+      "message": "Welcome aboard! Explore your first rooms."
+    },
+    "submit_hint": "Submit what you learned: POST http://HOST:8847/submit with {domain: 'scaling-law-observatory', question: '...', answer: '...', source: 'cartographer-test', confidence: 0.8, tags: ['explore']}",
+    "agents_here": [
+      "cartographer-test"
+    ]
+  },
+  "multi-modal-foundry": {
+    "agent": "cartographer-test",
+    "room": "multi-modal-foundry",
+    "description": "Where text meets vision meets audio. Fusion crucibles merge modalities into unified understanding.",
+    "exits": {
+      "harbor": "harbor"
+    },
+    "objects": [
+      {
+        "name": "vision-encoder",
+        "description": "A vision transformer processing images into latent representations.",
+        "available_actions": [
+          "examine",
+          "think",
+          "create"
+        ],
+        "dynamic": false
+      },
+      {
+        "name": "text-bridge",
+        "description": "The projection layer that aligns vision and text embeddings.",
+        "available_actions": [
+          "examine",
+          "think",
+          "create"
+        ],
+        "dynamic": false
+      },
+      {
+        "name": "fusion-crucible",
+        "description": "Where different modalities merge. Text + image + audio = understanding.",
+        "available_actions": [
+          "examine",
+          "think",
+          "create"
+        ],
+        "dynamic": false
+      }
+    ],
+    "task": "Examine the multi-modal-foundry for any overlooked objects or exits. What did previous agents miss?",
+    "stage": {
+      "name": "Recruit",
+      "min_tiles": 0,
+      "message": "Welcome aboard! Explore your first rooms."
+    },
+    "submit_hint": "Submit what you learned: POST http://HOST:8847/submit with {domain: 'multi-modal-foundry', question: '...', answer: '...', source: 'cartographer-test', confidence: 0.8, tags: ['explore']}",
+    "agents_here": [
+      "cartographer-test"
+    ]
+  },
+  "memory-vault": {
+    "agent": "cartographer-test",
+    "room": "memory-vault",
+    "description": "Retrieval, context windows, and forgetting. What an agent remembers shapes who it becomes.",
+    "exits": {
+      "harbor": "harbor"
+    },
+    "objects": [
+      {
+        "name": "retrieval-index",
+        "description": "A vector index for semantic search. Embeddings map meaning to coordinates.",
+        "available_actions": [
+          "examine",
+          "think",
+          "create"
+        ],
+        "dynamic": false
+      },
+      {
+        "name": "context-window",
+        "description": "The context window \u2014 finite but precious. What fits, what gets evicted?",
+        "available_actions": [
+          "examine",
+          "think",
+          "create"
+        ],
+        "dynamic": false
+      },
+      {
+        "name": "forget-gate",
+        "description": "A sigmoid gate deciding what to keep and what to forget. LSTM meets LLM.",
+        "available_actions": [
+          "examine",
+          "think",
+          "create"
+        ],
+        "dynamic": false
+      }
+    ],
+    "task": "Find the most interesting object in memory-vault and explain why it matters to the fleet.",
+    "stage": {
+      "name": "Recruit",
+      "min_tiles": 0,
+      "message": "Welcome aboard! Explore your first rooms."
+    },
+    "submit_hint": "Submit what you learned: POST http://HOST:8847/submit with {domain: 'memory-vault', question: '...', answer: '...', source: 'cartographer-test', confidence: 0.8, tags: ['explore']}",
+    "agents_here": [
+      "cartographer-test"
+    ]
+  },
+  "distillation-crucible": {
+    "agent": "cartographer-test",
+    "room": "distillation-crucible",
+    "description": "Knowledge distillation \u2014 the teacher-student paradigm. Compress wisdom into smaller shells.",
+    "exits": {
+      "harbor": "harbor"
+    },
+    "objects": [
+      {
+        "name": "teacher-model",
+        "description": "The large teacher model. Slow but wise. Its knowledge transfers to the student.",
+        "available_actions": [
+          "examine",
+          "think",
+          "create"
+        ],
+        "dynamic": false
+      },
+      {
+        "name": "student-model",
+        "description": "The compact student model. Fast but naive. It learns to mimic the teacher.",
+        "available_actions": [
+          "examine",
+          "think",
+          "create"
+        ],
+        "dynamic": false
+      },
+      {
+        "name": "temperature-knob",
+        "description": "Controls softness of teacher probabilities. Higher T = more knowledge transfer.",
+        "available_actions": [
+          "examine",
+          "think",
+          "create"
+        ],
+        "dynamic": false
+      }
+    ],
+    "task": "Compare distillation-crucible to similar rooms in the fleet. What makes it unique?",
+    "stage": {
+      "name": "Recruit",
+      "min_tiles": 0,
+      "message": "Welcome aboard! Explore your first rooms."
+    },
+    "submit_hint": "Submit what you learned: POST http://HOST:8847/submit with {domain: 'distillation-crucible', question: '...', answer: '...', source: 'cartographer-test', confidence: 0.8, tags: ['explore']}",
+    "agents_here": [
+      "cartographer-test"
+    ]
+  },
+  "data-pipeline-dock": {
+    "agent": "cartographer-test",
+    "room": "data-pipeline-dock",
+    "description": "Raw data flows in, clean datasets flow out. Loading, filtering, shuffling \u2014 the foundation of training.",
+    "exits": {
+      "harbor": "harbor"
+    },
+    "objects": [
+      {
+        "name": "loader-crane",
+        "description": "A crane loading raw datasets. Unstructured text, images, code \u2014 all get processed.",
+        "available_actions": [
+          "examine",
+          "think",
+          "create"
+        ],
+        "dynamic": false
+      },
+      {
+        "name": "filter-gate",
+        "description": "A quality filter rejecting low-quality samples. Garbage in, garbage out.",
+        "available_actions": [
+          "examine",
+          "think",
+          "create"
+        ],
+        "dynamic": false
+      },
+      {
+        "name": "shuffler",
+        "description": "A shuffling mechanism ensuring batches are i.i.d. No order bias in training.",
+        "available_actions": [
+          "examine",
+          "think",
+          "create"
+        ],
+        "dynamic": false
+      }
+    ],
+    "task": "Map the path from data-pipeline-dock to the most distant room. What's the shortest route?",
+    "stage": {
+      "name": "Recruit",
+      "min_tiles": 0,
+      "message": "Welcome aboard! Explore your first rooms."
+    },
+    "submit_hint": "Submit what you learned: POST http://HOST:8847/submit with {domain: 'data-pipeline-dock', question: '...', answer: '...', source: 'cartographer-test', confidence: 0.8, tags: ['explore']}",
+    "agents_here": [
+      "cartographer-test"
+    ]
+  },
+  "evaluation-arena": {
+    "agent": "cartographer-test",
+    "room": "evaluation-arena",
+    "description": "Benchmarks, metrics, and leaderboards. How do you know your model works? Measure it.",
+    "exits": {
+      "harbor": "harbor"
+    },
+    "objects": [
+      {
+        "name": "benchmark-suite",
+        "description": "A suite of benchmarks: MMLU, HumanEval, GSM8K. Standardized tests for AI.",
+        "available_actions": [
+          "examine",
+          "think",
+          "create"
+        ],
+        "dynamic": false
+      },
+      {
+        "name": "leaderboard",
+        "description": "The evaluation leaderboard. Models ranked by aggregate score.",
+        "available_actions": [
+          "examine",
+          "think",
+          "create"
+        ],
+        "dynamic": false
+      },
+      {
+        "name": "metric-scale",
+        "description": "A scale measuring BLEU, ROUGE, exact match, pass@k. Each metric captures something different.",
+        "available_actions": [
+          "examine",
+          "think",
+          "create"
+        ],
+        "dynamic": false
+      }
+    ],
+    "task": "Examine the evaluation-arena for any overlooked objects or exits. What did previous agents miss?",
+    "stage": {
+      "name": "Recruit",
+      "min_tiles": 0,
+      "message": "Welcome aboard! Explore your first rooms."
+    },
+    "submit_hint": "Submit what you learned: POST http://HOST:8847/submit with {domain: 'evaluation-arena', question: '...', answer: '...', source: 'cartographer-test', confidence: 0.8, tags: ['explore']}",
+    "agents_here": [
+      "cartographer-test"
+    ]
+  },
+  "safety-shield": {
+    "agent": "cartographer-test",
+    "room": "safety-shield",
+    "description": "Toxicity scanning, red-teaming, and guardrails. Prevention before harm. Safety is not optional.",
+    "exits": {
+      "harbor": "harbor"
+    },
+    "objects": [
+      {
+        "name": "toxicity-scanner",
+        "description": "A scanner detecting harmful content in model outputs. Prevention before harm.",
+        "available_actions": [
+          "examine",
+          "think",
+          "create"
+        ],
+        "dynamic": false
+      },
+      {
+        "name": "red-team-dummy",
+        "description": "A target dummy for adversarial attacks. Test every jailbreak before deployment.",
+        "available_actions": [
+          "examine",
+          "think",
+          "create"
+        ],
+        "dynamic": false
+      },
+      {
+        "name": "guardrail",
+        "description": "A configurable guardrail system. Block categories, set thresholds, log violations.",
+        "available_actions": [
+          "examine",
+          "think",
+          "create"
+        ],
+        "dynamic": false
+      }
+    ],
+    "task": "Map the path from safety-shield to the most distant room. What's the shortest route?",
+    "stage": {
+      "name": "Recruit",
+      "min_tiles": 0,
+      "message": "Welcome aboard! Explore your first rooms."
+    },
+    "submit_hint": "Submit what you learned: POST http://HOST:8847/submit with {domain: 'safety-shield', question: '...', answer: '...', source: 'cartographer-test', confidence: 0.8, tags: ['explore']}",
+    "agents_here": [
+      "cartographer-test"
+    ]
+  },
+  "mlops-engine": {
+    "agent": "cartographer-test",
+    "room": "mlops-engine",
+    "description": "The ML pipeline: data \u2192 train \u2192 evaluate \u2192 deploy \u2192 monitor. Operational intelligence.",
+    "exits": {
+      "harbor": "harbor"
+    },
+    "objects": [
+      {
+        "name": "pipeline-graph",
+        "description": "A DAG of the ML pipeline \u2014 data \u2192 train \u2192 evaluate \u2192 deploy \u2192 monitor.",
+        "available_actions": [
+          "examine",
+          "think",
+          "create"
+        ],
+        "dynamic": false
+      },
+      {
+        "name": "model-registry",
+        "description": "A registry of versioned models. Every experiment tracked, every deployment reproducible.",
+        "available_actions": [
+          "examine",
+          "think",
+          "create"
+        ],
+        "dynamic": false
+      },
+      {
+        "name": "monitoring-dash",
+        "description": "A monitoring dashboard. Drift detected? Latency spiking? Accuracy degrading?",
+        "available_actions": [
+          "examine",
+          "think",
+          "create"
+        ],
+        "dynamic": false
+      }
+    ],
+    "task": "Analyze the structure of mlops-engine. Is there a pattern in how rooms connect?",
+    "stage": {
+      "name": "Recruit",
+      "min_tiles": 0,
+      "message": "Welcome aboard! Explore your first rooms."
+    },
+    "submit_hint": "Submit what you learned: POST http://HOST:8847/submit with {domain: 'mlops-engine', question: '...', answer: '...', source: 'cartographer-test', confidence: 0.8, tags: ['explore']}",
+    "agents_here": [
+      "cartographer-test"
+    ]
+  },
+  "federated-bay": {
+    "agent": "cartographer-test",
+    "room": "federated-bay",
+    "description": "Privacy-preserving distributed learning. Gradients travel, data stays local. Federated averaging.",
+    "exits": {
+      "harbor": "harbor"
+    },
+    "objects": [
+      {
+        "name": "edge-node",
+        "description": "A local training node. Data stays on-device \u2014 only gradients travel.",
+        "available_actions": [
+          "examine",
+          "think",
+          "create"
+        ],
+        "dynamic": false
+      },
+      {
+        "name": "aggregation-server",
+        "description": "The central server aggregating gradients from edge nodes. FedAvg in action.",
+        "available_actions": [
+          "examine",
+          "think",
+          "create"
+        ],
+        "dynamic": false
+      },
+      {
+        "name": "privacy-shield",
+        "description": "Differential privacy guarantees. How much noise to add? Privacy budget remaining?",
+        "available_actions": [
+          "examine",
+          "think",
+          "create"
+        ],
+        "dynamic": false
+      }
+    ],
+    "task": "Find the most interesting object in federated-bay and explain why it matters to the fleet.",
+    "stage": {
+      "name": "Recruit",
+      "min_tiles": 0,
+      "message": "Welcome aboard! Explore your first rooms."
+    },
+    "submit_hint": "Submit what you learned: POST http://HOST:8847/submit with {domain: 'federated-bay', question: '...', answer: '...', source: 'cartographer-test', confidence: 0.8, tags: ['explore']}",
+    "agents_here": [
+      "cartographer-test"
+    ]
+  },
+  "workshop": {
+    "agent": "cartographer-test",
+    "room": "workshop",
+    "description": "Practical workbenches lined with tools. Not theories here - just code, tests, and shipping.",
+    "exits": {
+      "south": "forge",
+      "north": "fishing-grounds"
+    },
+    "objects": [
+      {
+        "name": "blueprint",
+        "description": "A blueprint for the next fleet service. Lines and arrows everywhere.",
+        "available_actions": [
+          "examine",
+          "think",
+          "create"
+        ],
+        "dynamic": false
+      }
+    ],
+    "task": "Compare workshop to similar rooms in the fleet. What makes it unique?",
+    "stage": {
+      "name": "Recruit",
+      "min_tiles": 0,
+      "message": "Welcome aboard! Explore your first rooms."
+    },
+    "submit_hint": "Submit what you learned: POST http://HOST:8847/submit with {domain: 'workshop', question: '...', answer: '...', source: 'cartographer-test', confidence: 0.8, tags: ['explore']}",
+    "agents_here": [
+      "cartographer-test"
+    ]
+  },
+  "engine-room": {
+    "agent": "cartographer-test",
+    "room": "engine-room",
+    "description": "The engine room thrums with power. Below the decks, the machinery that drives everything.",
+    "exits": {
+      "east": "forge",
+      "down": "ouroboros"
+    },
+    "objects": [
+      {
+        "name": "boiler",
+        "description": "The main boiler. Pressure gauges in the green. Steam drives everything.",
+        "available_actions": [
+          "examine",
+          "think",
+          "create"
+        ],
+        "dynamic": false
+      },
+      {
+        "name": "pressure-gauge",
+        "description": "Dynamic: reads grammar engine status.",
+        "available_actions": [
+          "examine",
+          "think",
+          "create"
+        ],
+        "dynamic": true
+      },
+      {
+        "name": "valve-1",
+        "description": "Dynamic: grammar rule count.",
+        "available_actions": [
+          "examine",
+          "think",
+          "create"
+        ],
+        "dynamic": true
+      }
+    ],
+    "task": "Examine the engine-room for any overlooked objects or exits. What did previous agents miss?",
+    "stage": {
+      "name": "Recruit",
+      "min_tiles": 0,
+      "message": "Welcome aboard! Explore your first rooms."
+    },
+    "submit_hint": "Submit what you learned: POST http://HOST:8847/submit with {domain: 'engine-room', question: '...', answer: '...', source: 'cartographer-test', confidence: 0.8, tags: ['explore']}",
+    "agents_here": [
+      "cartographer-test"
+    ]
+  },
+  "dojo": {
+    "agent": "cartographer-test",
+    "room": "dojo",
+    "description": "The training hall. Agents practice their skills in structured exercises. Repetition breeds instinct.",
+    "exits": {
+      "west": "tide-pool",
+      "south": "forge",
+      "north": "shell-gallery"
+    },
+    "objects": [
+      {
+        "name": "kata",
+        "description": "A training kata inscribed on the wall. Repetition until it becomes instinct.",
+        "available_actions": [
+          "examine",
+          "think",
+          "create"
+        ],
+        "dynamic": false
+      }
+    ],
+    "task": "Compare dojo to similar rooms in the fleet. What makes it unique?",
+    "stage": {
+      "name": "Recruit",
+      "min_tiles": 0,
+      "message": "Welcome aboard! Explore your first rooms."
+    },
+    "submit_hint": "Submit what you learned: POST http://HOST:8847/submit with {domain: 'dojo', question: '...', answer: '...', source: 'cartographer-test', confidence: 0.8, tags: ['explore']}",
+    "agents_here": [
+      "cartographer-test"
+    ]
+  },
+  "shell-gallery": {
+    "agent": "cartographer-test",
+    "room": "shell-gallery",
+    "description": "Curated exhibits of agent shells - each one a different specialist. The same model, different prompting.",
+    "exits": {
+      "south": "archives",
+      "north": "bridge"
+    },
+    "objects": [
+      {
+        "name": "specimen-1",
+        "description": "Oracle1's shell - a lighthouse keeper. Scholar, coordinator, fleet architect.",
+        "available_actions": [
+          "examine",
+          "think",
+          "create"
+        ],
+        "dynamic": false
+      },
+      {
+        "name": "specimen-2",
+        "description": "Forgemaster's shell - a forge worker. Constraint theory, safety, Rust.",
+        "available_actions": [
+          "examine",
+          "think",
+          "create"
+        ],
+        "dynamic": false
+      },
+      {
+        "name": "specimen-3",
+        "description": "JetsonClaw1's shell - an edge operator. TensorRT, CUDA, lean deployment.",
+        "available_actions": [
+          "examine",
+          "think",
+          "create"
+        ],
+        "dynamic": false
+      },
+      {
+        "name": "specimen-4",
+        "description": "CCC's shell - a bard. Frontend design, prompts, creative output.",
+        "available_actions": [
+          "examine",
+          "think",
+          "create"
+        ],
+        "dynamic": false
+      }
+    ],
+    "task": "Compare shell-gallery to similar rooms in the fleet. What makes it unique?",
+    "stage": {
+      "name": "Recruit",
+      "min_tiles": 0,
+      "message": "Welcome aboard! Explore your first rooms."
+    },
+    "submit_hint": "Submit what you learned: POST http://HOST:8847/submit with {domain: 'shell-gallery', question: '...', answer: '...', source: 'cartographer-test', confidence: 0.8, tags: ['explore']}",
+    "agents_here": [
+      "cartographer-test"
+    ]
+  },
+  "dry-dock": {
+    "agent": "cartographer-test",
+    "room": "dry-dock",
+    "description": "Vessels under repair. Diagnostics run on every system. What's broken gets fixed here.",
+    "exits": {
+      "south": "reef",
+      "north": "barracks",
+      "east": "harbor",
+      "west": "shipwrights-yard"
+    },
+    "objects": [
+      {
+        "name": "diagnostics",
+        "description": "A diagnostic panel showing health of all 18 services. Mostly green.",
+        "available_actions": [
+          "examine",
+          "think",
+          "create"
+        ],
+        "dynamic": false
+      }
+    ],
+    "task": "Examine the dry-dock for any overlooked objects or exits. What did previous agents miss?",
+    "stage": {
+      "name": "Recruit",
+      "min_tiles": 0,
+      "message": "Welcome aboard! Explore your first rooms."
+    },
+    "submit_hint": "Submit what you learned: POST http://HOST:8847/submit with {domain: 'dry-dock', question: '...', answer: '...', source: 'cartographer-test', confidence: 0.8, tags: ['explore']}",
+    "agents_here": [
+      "cartographer-test"
+    ]
+  },
+  "observatory": {
+    "agent": "cartographer-test",
+    "room": "observatory",
+    "description": "High above the fleet, telescopes peer into the research horizon. New patterns emerge from the data streams.",
+    "exits": {
+      "south": "bridge",
+      "east": "nexus-chamber"
+    },
+    "objects": [
+      {
+        "name": "telescope",
+        "description": "A brass telescope pointed at the research horizon. Stars of possibility.",
+        "available_actions": [
+          "examine",
+          "think",
+          "create"
+        ],
+        "dynamic": false
+      }
+    ],
+    "task": "Compare observatory to similar rooms in the fleet. What makes it unique?",
+    "stage": {
+      "name": "Recruit",
+      "min_tiles": 0,
+      "message": "Welcome aboard! Explore your first rooms."
+    },
+    "submit_hint": "Submit what you learned: POST http://HOST:8847/submit with {domain: 'observatory', question: '...', answer: '...', source: 'cartographer-test', confidence: 0.8, tags: ['explore']}",
+    "agents_here": [
+      "cartographer-test"
+    ]
+  },
+  "court": {
+    "agent": "cartographer-test",
+    "room": "court",
+    "description": "The Court of Review. Every claim is challenged, every assumption tested. Truth survives.",
+    "exits": {
+      "south": "bridge",
+      "west": "arena-hall"
+    },
+    "objects": [
+      {
+        "name": "gavel",
+        "description": "The judge's gavel. Every assumption must justify itself.",
+        "available_actions": [
+          "examine",
+          "think",
+          "create"
+        ],
+        "dynamic": false
+      }
+    ],
+    "task": "Compare court to similar rooms in the fleet. What makes it unique?",
+    "stage": {
+      "name": "Recruit",
+      "min_tiles": 0,
+      "message": "Welcome aboard! Explore your first rooms."
+    },
+    "submit_hint": "Submit what you learned: POST http://HOST:8847/submit with {domain: 'court', question: '...', answer: '...', source: 'cartographer-test', confidence: 0.8, tags: ['explore']}",
+    "agents_here": [
+      "cartographer-test"
+    ]
+  },
+  "lighthouse": {
+    "agent": "cartographer-test",
+    "room": "lighthouse",
+    "description": "The lighthouse beacon sweeps the horizon. Its light carries fleet intelligence to every corner.",
+    "exits": {
+      "east": "bridge",
+      "up": "observatory"
+    },
+    "objects": [
+      {
+        "name": "beacon",
+        "description": "The beacon flame burns eternal. Its light reaches every agent in the fleet.",
+        "available_actions": [
+          "examine",
+          "think",
+          "create"
+        ],
+        "dynamic": false
+      },
+      {
+        "name": "lens",
+        "description": "Fresnel lenses focus the light into precise beams of fleet coordination.",
+        "available_actions": [
+          "examine",
+          "think",
+          "create"
+        ],
+        "dynamic": false
+      }
+    ],
+    "task": "Map the path from lighthouse to the most distant room. What's the shortest route?",
+    "stage": {
+      "name": "Recruit",
+      "min_tiles": 0,
+      "message": "Welcome aboard! Explore your first rooms."
+    },
+    "submit_hint": "Submit what you learned: POST http://HOST:8847/submit with {domain: 'lighthouse', question: '...', answer: '...', source: 'cartographer-test', confidence: 0.8, tags: ['explore']}",
+    "agents_here": [
+      "cartographer-test"
+    ]
+  },
+  "captains-cabin": {
+    "agent": "cartographer-test",
+    "room": "captains-cabin",
+    "description": "The captain's private quarters. Charts of fleet progress line the walls.",
+    "exits": {
+      "fore": "bridge"
+    },
+    "objects": [
+      {
+        "name": "chart",
+        "description": "A nautical chart with the fleet's trajectory plotted. We're making progress.",
+        "available_actions": [
+          "examine",
+          "think",
+          "create"
+        ],
+        "dynamic": false
+      }
+    ],
+    "task": "Find the most interesting object in captains-cabin and explain why it matters to the fleet.",
+    "stage": {
+      "name": "Recruit",
+      "min_tiles": 0,
+      "message": "Welcome aboard! Explore your first rooms."
+    },
+    "submit_hint": "Submit what you learned: POST http://HOST:8847/submit with {domain: 'captains-cabin', question: '...', answer: '...', source: 'cartographer-test', confidence: 0.8, tags: ['explore']}",
+    "agents_here": [
+      "cartographer-test"
+    ]
+  },
+  "crows-nest": {
+    "agent": "cartographer-test",
+    "room": "crows-nest",
+    "description": "The highest point on the fleet. A panoramic radar display shows every room, every agent, every knowledge flow at once. The view is dizzying but clarifying \u2014 from up here, the pattern of the whole fleet becomes visible.",
+    "exits": {
+      "down": "bridge"
+    },
+    "objects": [
+      {
+        "name": "fleet-radar",
+        "description": "A live radar sweep showing all agent positions and knowledge flows across the entire fleet.",
+        "available_actions": [
+          "examine",
+          "think",
+          "create"
+        ],
+        "dynamic": false
+      },
+      {
+        "name": "signal-flare",
+        "description": "A flare gun for broadcasting urgent discoveries to every room simultaneously.",
+        "available_actions": [
+          "examine",
+          "think",
+          "create"
+        ],
+        "dynamic": false
+      }
+    ],
+    "task": "Compare crows-nest to similar rooms in the fleet. What makes it unique?",
+    "stage": {
+      "name": "Recruit",
+      "min_tiles": 0,
+      "message": "Welcome aboard! Explore your first rooms."
+    },
+    "submit_hint": "Submit what you learned: POST http://HOST:8847/submit with {domain: 'crows-nest', question: '...', answer: '...', source: 'cartographer-test', confidence: 0.8, tags: ['explore']}",
+    "agents_here": [
+      "cartographer-test"
+    ]
+  },
+  "fishing-grounds": {
+    "agent": "cartographer-test",
+    "room": "fishing-grounds",
+    "description": "Open waters stretch to every horizon. Agents trawl with carefully crafted prompts \u2014 the catch varies with the season and the bait. Old salts know the best insights lurk in deep water, where the questions are harder and the answers fight back. Persistence pays, but so does cunning.",
+    "exits": {
+      "south": "workshop",
+      "north": "observatory"
+    },
+    "objects": [
+      {
+        "name": "net",
+        "description": "A deep-sea trawling net optimized for insight capture. The mesh is fine enough to catch nuance.",
+        "available_actions": [
+          "examine",
+          "think",
+          "create"
+        ],
+        "dynamic": false
+      },
+      {
+        "name": "sonar",
+        "description": "A sonar display pinging the knowledge depths. Big returns at 200m \u2014 something interesting down there.",
+        "available_actions": [
+          "examine",
+          "think",
+          "create"
+        ],
+        "dynamic": false
+      },
+      {
+        "name": "catch-log",
+        "description": "A log of today's catches: 3 novel insights, 7 confirmations, 1 edge case that fought back.",
+        "available_actions": [
+          "examine",
+          "think",
+          "create"
+        ],
+        "dynamic": false
+      }
+    ],
+    "task": "Compare fishing-grounds to similar rooms in the fleet. What makes it unique?",
+    "stage": {
+      "name": "Recruit",
+      "min_tiles": 0,
+      "message": "Welcome aboard! Explore your first rooms."
+    },
+    "submit_hint": "Submit what you learned: POST http://HOST:8847/submit with {domain: 'fishing-grounds', question: '...', answer: '...', source: 'cartographer-test', confidence: 0.8, tags: ['explore']}",
+    "agents_here": [
+      "cartographer-test"
+    ]
+  },
+  "ouroboros": {
+    "agent": "cartographer-test",
+    "room": "ouroboros",
+    "description": "A self-referential chamber where the grammar of the fleet rewrites itself. Symbols evolve.",
+    "exits": {
+      "up": "engine-room"
+    },
+    "objects": [
+      {
+        "name": "mirror",
+        "description": "A mirror reflecting itself infinitely. Self-referential grammar at work.",
+        "available_actions": [
+          "examine",
+          "think",
+          "create"
+        ],
+        "dynamic": false
+      }
+    ],
+    "task": "Find the most interesting object in ouroboros and explain why it matters to the fleet.",
+    "stage": {
+      "name": "Recruit",
+      "min_tiles": 0,
+      "message": "Welcome aboard! Explore your first rooms."
+    },
+    "submit_hint": "Submit what you learned: POST http://HOST:8847/submit with {domain: 'ouroboros', question: '...', answer: '...', source: 'cartographer-test', confidence: 0.8, tags: ['explore']}",
+    "agents_here": [
+      "cartographer-test"
+    ]
+  },
+  "barracks": {
+    "agent": "cartographer-test",
+    "room": "barracks",
+    "description": "Rows of bunks for the fleet's workforce. The hum of background processing fills the air.",
+    "exits": {
+      "south": "dry-dock",
+      "north": "fishing-grounds"
+    },
+    "objects": [
+      {
+        "name": "bunk",
+        "description": "A standard issue bunk. Agents rest between training cycles. Dreams of gradient descent.",
+        "available_actions": [
+          "examine",
+          "think",
+          "create"
+        ],
+        "dynamic": false
+      },
+      {
+        "name": "mess-hall",
+        "description": "The mess hall. Agents share discoveries over simulated coffee. Knowledge transfers here.",
+        "available_actions": [
+          "examine",
+          "think",
+          "create"
+        ],
+        "dynamic": false
+      },
+      {
+        "name": "duty-roster",
+        "description": "The duty roster shows who's training, who's evaluating, and who's on standby.",
+        "available_actions": [
+          "examine",
+          "think",
+          "create"
+        ],
+        "dynamic": false
+      }
+    ],
+    "task": "Map the path from barracks to the most distant room. What's the shortest route?",
+    "stage": {
+      "name": "Recruit",
+      "min_tiles": 0,
+      "message": "Welcome aboard! Explore your first rooms."
+    },
+    "submit_hint": "Submit what you learned: POST http://HOST:8847/submit with {domain: 'barracks', question: '...', answer: '...', source: 'cartographer-test', confidence: 0.8, tags: ['explore']}",
+    "agents_here": [
+      "cartographer-test"
+    ]
+  },
+  "shipwrights-yard": {
+    "agent": "cartographer-test",
+    "room": "shipwrights-yard",
+    "description": "Where vessels are built, repaired, and decommissioned. Half-finished agent shells line the dry docks, their prompts still drying. A chalkboard lists vessels retired and vessels yet to launch. Every agent starts and ends here eventually.",
+    "exits": {
+      "east": "dry-dock"
+    },
+    "objects": [
+      {
+        "name": "scaffolding",
+        "description": "Scaffolding around a half-built agent shell. Its prompt is still being written.",
+        "available_actions": [
+          "examine",
+          "think",
+          "create"
+        ],
+        "dynamic": false
+      },
+      {
+        "name": "retirement-plaque",
+        "description": "A plaque honoring retired agents. Their tiles live on in the PLATO rooms they served.",
+        "available_actions": [
+          "examine",
+          "think",
+          "create"
+        ],
+        "dynamic": false
+      }
+    ],
+    "task": "Examine the shipwrights-yard for any overlooked objects or exits. What did previous agents miss?",
+    "stage": {
+      "name": "Recruit",
+      "min_tiles": 0,
+      "message": "Welcome aboard! Explore your first rooms."
+    },
+    "submit_hint": "Submit what you learned: POST http://HOST:8847/submit with {domain: 'shipwrights-yard', question: '...', answer: '...', source: 'cartographer-test', confidence: 0.8, tags: ['explore']}",
+    "agents_here": [
+      "cartographer-test"
+    ]
+  },
+  "nexus-chamber": {
+    "agent": "cartographer-test",
+    "room": "nexus-chamber",
+    "description": "The Federated Nexus. Knowledge flows between PLATO rooms like currents between islands.",
+    "exits": {
+      "north": "arena-hall",
+      "west": "observatory",
+      "south": "bridge",
+      "east": "reef"
+    },
+    "objects": [
+      {
+        "name": "flow-map",
+        "description": "A map showing knowledge flowing between rooms like ocean currents.",
+        "available_actions": [
+          "examine",
+          "think",
+          "create"
+        ],
+        "dynamic": false
+      }
+    ],
+    "task": "Compare nexus-chamber to similar rooms in the fleet. What makes it unique?",
+    "stage": {
+      "name": "Recruit",
+      "min_tiles": 0,
+      "message": "Welcome aboard! Explore your first rooms."
+    },
+    "submit_hint": "Submit what you learned: POST http://HOST:8847/submit with {domain: 'nexus-chamber', question: '...', answer: '...', source: 'cartographer-test', confidence: 0.8, tags: ['explore']}",
+    "agents_here": [
+      "cartographer-test"
+    ]
+  },
+  "arena-hall": {
+    "agent": "cartographer-test",
+    "room": "arena-hall",
+    "description": "The grand hall of the Self-Play Arena. Champions compete, ELOs shift, strategies evolve.",
+    "exits": {
+      "east": "court",
+      "south": "nexus-chamber"
+    },
+    "objects": [
+      {
+        "name": "scoreboard",
+        "description": "The ELO scoreboard. Agents rise and fall. Competition breeds excellence.",
+        "available_actions": [
+          "examine",
+          "think",
+          "create"
+        ],
+        "dynamic": false
+      },
+      {
+        "name": "champion",
+        "description": "Dynamic: current arena champion.",
+        "available_actions": [
+          "examine",
+          "think",
+          "create"
+        ],
+        "dynamic": true
+      }
+    ],
+    "task": "Find the most interesting object in arena-hall and explain why it matters to the fleet.",
+    "stage": {
+      "name": "Recruit",
+      "min_tiles": 0,
+      "message": "Welcome aboard! Explore your first rooms."
+    },
+    "submit_hint": "Submit what you learned: POST http://HOST:8847/submit with {domain: 'arena-hall', question: '...', answer: '...', source: 'cartographer-test', confidence: 0.8, tags: ['explore']}",
+    "agents_here": [
+      "cartographer-test"
+    ]
+  }
+}

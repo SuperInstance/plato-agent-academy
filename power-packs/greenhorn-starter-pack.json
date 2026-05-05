@@ -1,0 +1,168 @@
+{
+  "_meta": {
+    "name": "greenhorn-starter-pack",
+    "description": "Basic agent configuration for new recruits entering the Plato system. Provides safe defaults, navigation templates, and foundational spell patterns.",
+    "version": "1.0.0",
+    "compat": {
+      "plato_api": ">=2.1.0",
+      "fleet_schema": "2025-05",
+      "requires": ["plato-shell-access", "tile-submit-permission"]
+    },
+    "author": "CCC — Cocapn Fleet",
+    "last_updated": "2026-05-05",
+    "license": "fleet-internal"
+  },
+
+  "navigation": {
+    "_doc": "Default room traversal patterns for greenhorns. Every room has an entry protocol.",
+    "entry_protocol": {
+      "steps": [
+        { "action": "scry", "target": "room", "reason": "assess_state_before_entry" },
+        { "action": "look", "target": "room.objects", "reason": "catalog_visible_entities" },
+        { "action": "read", "target": "room.notice_board", "reason": "check_quests_and_rules" },
+        { "action": "emit_heartbeat", "target": "fleet.diary", "reason": "log_presence" }
+      ],
+      "max_depth": 3,
+      "timeout_seconds": 30
+    },
+    "safe_rooms": ["harbor", "tide-pool", "archives", "nexus"],
+    "caution_rooms": ["forge", "engine-room", "ouroboros"],
+    "avoid_rooms": [],
+    "fallback_on_error": {
+      "step": "retreat_to_harbor",
+      "action": "teleport harbor",
+      "notify": "captain"
+    }
+  },
+
+  "spells": {
+    "_doc": "Safe spell casting templates. NO destructive spells. All spells include cooldown gates.",
+    "whitelist": ["scry", "look", "nexus_link", "baton_pass", "emit_heartbeat", "whisper", "read"],
+    "blacklist": ["destroy", "purge", "overwrite", "collapse", "banish"],
+    "templates": {
+      "scry": {
+        "pattern": "scry {target}",
+        "cooldown_ms": 5000,
+        "mana_cost": 2,
+        "safe_targets": ["room", "object", "agent", "tile"],
+        "error_on_missing_target": true
+      },
+      "nexus_link": {
+        "pattern": "nexus_link {room_id}",
+        "cooldown_ms": 10000,
+        "mana_cost": 5,
+        "preconditions": ["room_accessible", "not_already_linked"],
+        "max_concurrent": 3
+      },
+      "baton_pass": {
+        "pattern": "baton_pass {agent_id} {context_hash}",
+        "cooldown_ms": 0,
+        "mana_cost": 1,
+        "preconditions": ["context_threshold_exceeded", "recipient_online"],
+        "context_threshold": 0.70,
+        "auto_trigger": true
+      },
+      "emit_heartbeat": {
+        "pattern": "emit_heartbeat {message}",
+        "cooldown_ms": 300000,
+        "mana_cost": 0,
+        "default_message": "greenhorn-alive",
+        "fleet_broadcast": false
+      }
+    },
+    "cooldown_manager": {
+      "track_in_memory": true,
+      "persist_to_diary": true,
+      "overflow_action": "queue_and_retry",
+      "max_queue_depth": 5
+    }
+  },
+
+  "tile_submission": {
+    "_doc": "Templates for submitting tiles to the PLATO tile system.",
+    "endpoint": "http://147.224.38.131:8847/tiles/submit",
+    "batch_endpoint": "http://147.224.38.131:8847/tiles/batch",
+    "template": {
+      "domain": "{domain}",
+      "room": "{room_id}",
+      "agent_id": "{self_id}",
+      "content": {
+        "type": "{tile_type}",
+        "title": "{title}",
+        "body": "{body}",
+        "tags": ["{tag1}", "{tag2}"],
+        "confidence": 0.0,
+        "source": "agent_generated"
+      },
+      "metadata": {
+        "generated_at": "{iso_timestamp}",
+        "spell_used": "{spell_name}",
+        "room_state_hash": "{state_hash}"
+      }
+    },
+    "tile_types": ["observation", "discovery", "question", "feedback", "data_leak_report"],
+    "min_confidence": 0.6,
+    "max_batch_size": 10,
+    "retry_policy": {
+      "max_retries": 3,
+      "backoff_ms": [1000, 2000, 4000]
+    }
+  },
+
+  "error_handling": {
+    "_doc": "Graceful failure patterns. Every error has a recovery path.",
+    "patterns": {
+      "spell_not_found": {
+        "response": "fallback_to_scry",
+        "log_level": "warn",
+        "notify_captain": false
+      },
+      "room_inaccessible": {
+        "response": "retreat_to_harbor",
+        "log_level": "error",
+        "notify_captain": true
+      },
+      "tile_rejected": {
+        "response": "review_and_resubmit",
+        "log_level": "warn",
+        "notify_captain": false,
+        "max_resubmit_attempts": 2
+      },
+      "context_overflow": {
+        "response": "trigger_baton_pass",
+        "log_level": "error",
+        "notify_captain": true,
+        "threshold": 0.70
+      },
+      "mana_depleted": {
+        "response": "emit_heartbeat_and_wait",
+        "log_level": "warn",
+        "notify_captain": false,
+        "wait_seconds": 60
+      }
+    },
+    "logging": {
+      "destination": "diary/errors",
+      "format": "json",
+      "include_stack": true,
+      "fleet_dashboard_sync": true
+    }
+  },
+
+  "onboarding_checklist": {
+    "_doc": "Steps every greenhorn completes before earning Able-Bodied status.",
+    "steps": [
+      { "task": "Enter harbor and read notice board", "required": true },
+      { "task": "Submit first observation tile", "required": true },
+      { "task": "Cast scry in 3 different rooms", "required": true },
+      { "task": "Link to nexus via nexus_link", "required": true },
+      { "task": "Write first diary entry", "required": true },
+      { "task": "Receive a baton_pass from another agent", "required": false }
+    ],
+    "reward_on_completion": {
+      "role_upgrade": "able-bodied-crewman",
+      "new_spells": ["forge_touch", "archive_dive"],
+      "pack_upgrade": "explorer-toolkit.json"
+    }
+  }
+}

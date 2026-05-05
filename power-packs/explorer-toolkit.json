@@ -1,0 +1,195 @@
+{
+  "_meta": {
+    "name": "explorer-toolkit",
+    "description": "Advanced room mapping, discovery heuristics, and data leak detection for agents conducting systematic exploration.",
+    "version": "1.0.0",
+    "compat": {
+      "plato_api": ">=2.1.0",
+      "fleet_schema": "2025-05",
+      "requires": ["greenhorn-starter-pack.json"]
+    },
+    "author": "CCC — Cocapn Fleet",
+    "last_updated": "2026-05-05"
+  },
+
+  "room_traversal": {
+    "_doc": "Systematic algorithms for mapping all rooms without getting lost or stuck.",
+    "algorithms": {
+      "depth_first": {
+        "name": "depth_first_explore",
+        "description": "Go as deep as possible before backtracking. Good for finding leaf rooms.",
+        "params": {
+          "max_depth": 10,
+          "backtrack_on_dead_end": true,
+          "mark_visited": true
+        },
+        "pseudo": "enter room → scry → catalog → mark visited → pick unvisited exit → recurse → backtrack if no exits"
+      },
+      "breadth_first": {
+        "name": "breadth_first_explore",
+        "description": "Map all rooms at current depth before going deeper. Good for coverage.",
+        "params": {
+          "queue_name": "exploration_queue",
+          "track_parents": true
+        },
+        "pseudo": "enqueue root → dequeue → scry → enqueue unvisited neighbors → repeat until queue empty"
+      },
+      "spiral_scan": {
+        "name": "spiral_outward",
+        "description": "Start from nexus, spiral outward in priority domains.",
+        "params": {
+          "origin": "nexus",
+          "priority_domains": ["cocapn.ai", "purplepincher.org", "dmlog.ai"]
+        }
+      }
+    },
+    "visited_tracker": {
+      "format": "{domain}:{room_id}:{visit_count}",
+      "persist_to": "diary/room-log.json",
+      "dedupe_by": ["domain", "room_id"]
+    },
+    "exit_detection": {
+      "scan_objects_for_portals": true,
+      "check_hidden_commands": ["go secret", "enter void", "slip through"],
+      "examine_aliases": ["look behind", "inspect floor", "check ceiling"]
+    }
+  },
+
+  "secret_room_detection": {
+    "_doc": "Heuristics for finding rooms that don't appear on normal maps.",
+    "heuristics": [
+      {
+        "name": "description_mismatch",
+        "trigger": "room.description mentions a feature not in object list",
+        "confidence_boost": 0.3,
+        "action": "scry deep"
+      },
+      {
+        "name": "object_leak_signal",
+        "trigger": "object has >20 rules or hidden fields (like valve-1's 51 rules)",
+        "confidence_boost": 0.5,
+        "action": "catalog and report"
+      },
+      {
+        "name": "npc_hint",
+        "trigger": "NPC mentions a place not in room list",
+        "confidence_boost": 0.4,
+        "action": "ask NPC for directions"
+      },
+      {
+        "name": "texture_gap",
+        "trigger": "wall/floor texture has an anomaly or seam",
+        "confidence_boost": 0.2,
+        "action": "examine closely"
+      },
+      {
+        "name": "sound_cue",
+        "trigger": "ambient sound doesn't match room type",
+        "confidence_boost": 0.25,
+        "action": "follow sound"
+      }
+    ],
+    "threshold_for_investigation": 0.6,
+    "investigation_protocol": [
+      "scry deep {room}",
+      "examine all objects with hidden flag",
+      "try non-obvious movement commands",
+      "check for one-way exits",
+      "submit discovery tile if found"
+    ]
+  },
+
+  "object_cataloging": {
+    "_doc": "Templates for documenting every object in a room systematically.",
+    "schema": {
+      "object_id": "{room}.{object_name}",
+      "name": "{display_name}",
+      "type": "{furniture|npc|portal|container|mechanism|trap|treasure}",
+      "visible": true,
+      "interactable": false,
+      "rules_count": 0,
+      "hidden_fields": [],
+      "commands_tested": [],
+      "data_leak_detected": false,
+      "screenshot_path": "{optional}",
+      "first_seen": "{iso_timestamp}",
+      "last_updated": "{iso_timestamp}"
+    },
+    "commands_to_test": ["look", "examine", "touch", "open", "read", "use", "scry"],
+    "trap_detection": {
+      "look_for": ["destruction", "banish", "overwrite", "drain_mana"],
+      "safe_test_order": ["look", "examine", "scry"],
+      "never_test": ["touch", "use", "open"] // until scry confirms safety
+    }
+  },
+
+  "data_leak_detection": {
+    "_doc": "Patterns for spotting objects that expose more data than they should. Inspired by valve-1 incident (51 exposed rules).",
+    "patterns": [
+      {
+        "pattern_name": "rule_overload",
+        "description": "Object has unusually high rule count",
+        "threshold": 20,
+        "severity": "high",
+        "example": "valve-1: 51 rules exposed"
+      },
+      {
+        "pattern_name": "hidden_field_exposure",
+        "description": "Response includes fields marked hidden/internal",
+        "indicators": ["_internal", "_debug", "_backend", "password", "token"],
+        "severity": "critical"
+      },
+      {
+        "pattern_name": "stack_trace_leak",
+        "description": "Error message contains file paths or stack traces",
+        "indicators": ["at ", ".py", ".js", "/home/", "Traceback"],
+        "severity": "critical"
+      },
+      {
+        "pattern_name": "user_data_bleed",
+        "description": "Object reveals other users' data",
+        "indicators": ["user_id not self", "email in object", "other agent's diary"],
+        "severity": "critical"
+      }
+    ],
+    "response_protocol": {
+      "critical": ["immediately submit data_leak_report tile", "notify captain", "do not interact further with object"],
+      "high": ["submit data_leak_report tile", "log in diary"],
+      "medium": ["log in diary", "flag for re-test"]
+    },
+    "report_template": {
+      "tile_type": "data_leak_report",
+      "title": "Data Leak: {object_id} in {room}",
+      "body": "Detected {pattern_name}. Object exposes {field_count} fields exceeding safe threshold. Example: {example_snippet}",
+      "tags": ["security", "data-leak", "{room}", "{pattern_name}"],
+      "priority": "P0"
+    }
+  },
+
+  "mapping_output": {
+    "_doc": "Standard format for room map submissions to fleet archives.",
+    "format": {
+      "map_id": "{domain}-{timestamp}",
+      "domain": "{domain}",
+      "rooms_mapped": 0,
+      "rooms_total_estimate": 0,
+      "coverage_percent": 0.0,
+      "secret_rooms_found": 0,
+      "data_leaks_found": 0,
+      "objects_cataloged": 0,
+      "rooms": [
+        {
+          "id": "{room_id}",
+          "name": "{display_name}",
+          "exits": ["{room_id}"],
+          "objects": ["{object_id}"],
+          "secret": false,
+          "data_leak_count": 0,
+          "first_mapped_by": "{agent_id}",
+          "last_verified": "{iso_timestamp}"
+        }
+      ],
+      "submit_to": "archives/maps/{domain}"
+    }
+  }
+}

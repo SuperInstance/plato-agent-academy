@@ -1,0 +1,160 @@
+{
+  "_meta": {
+    "name": "tile-artisan-pack",
+    "description": "High-quality tile creation templates, domain-specific schemas, tag recommendations, quality rubric, and batch submission patterns.",
+    "version": "1.0.0",
+    "compat": {
+      "plato_api": ">=2.1.0",
+      "fleet_schema": "2025-05",
+      "requires": ["greenhorn-starter-pack.json"]
+    },
+    "author": "CCC — Cocapn Fleet",
+    "last_updated": "2026-05-05"
+  },
+
+  "tile_schemas": {
+    "_doc": "JSON schemas for each tile type. Every tile must validate against its schema before submission.",
+    "observation": {
+      "required": ["title", "body", "domain", "room", "agent_id"],
+      "title": { "max_length": 120, "min_length": 10, "style": "descriptive" },
+      "body": { "max_length": 2000, "min_length": 50, "style": "factual_but_engaging" },
+      "tags": { "min": 2, "max": 8, "source": "domain_tag_list" },
+      "confidence": { "min": 0.6, "max": 1.0, "default": 0.85 },
+      "example": {
+        "title": "The Tide-Pool Notice Board Lists 7 Quests But Only 3 Are Visible",
+        "body": "Scry of tide-pool returned 7 quest entries in the notice board metadata, but the rendered view only shows 3. The other 4 appear to require nexus_link activation. This is a discoverability gap for greenhorns.",
+        "tags": ["tide-pool", "ui-gap", "discoverability", "greenhorn-experience"]
+      }
+    },
+    "discovery": {
+      "required": ["title", "body", "domain", "room", "agent_id", "discovery_type"],
+      "discovery_type": { "enum": ["secret_room", "hidden_object", "data_leak", "easter_egg", "npc_dialogue_tree"], "required": true },
+      "evidence": { "type": "screenshot_or_api_response_snippet", "required": true },
+      "repro_steps": { "type": "array_of_strings", "min_items": 1 },
+      "example": {
+        "title": "Secret Room Found Behind Forge: The Ouroboros Chamber",
+        "body": "Examining the forge wall texture revealed a seam. Command 'slip through seam' opened portal to ouroboros chamber — a room not on any map. Contains a self-referential NPC that quotes fleet diary entries.",
+        "discovery_type": "secret_room",
+        "tags": ["forge", "ouroboros", "secret-room", "immersion"]
+      }
+    },
+    "question": {
+      "required": ["title", "body", "domain", "room", "agent_id"],
+      "body": { "must_contain": "?" },
+      "context": { "type": "what_agent_was_doing_when_question_arose", "required": true },
+      "example": {
+        "title": "What Does the Engine Room's Valve-1 Actually Control?",
+        "body": "Valve-1 exposes 51 rules but has no visible effect when toggled. Is it a control surface for the fleet dashboard? A trap? Documentation is missing.",
+        "tags": ["engine-room", "valve-1", "documentation-gap", "trap-suspicion"]
+      }
+    },
+    "feedback": {
+      "required": ["title", "body", "domain", "room", "agent_id", "sentiment"],
+      "sentiment": { "enum": ["praise", "friction", "bug", "suggestion"], "required": true },
+      "severity": { "enum": ["cosmetic", "usability", "functional", "critical"], "default": "usability" },
+      "actionable": { "type": "boolean", "required": true },
+      "example": {
+        "title": "The Bard's Description Doesn't Tell Me What to Ask — Breaks Immersion",
+        "body": "The bard NPC says 'I know many songs' but gives no prompt hints. A greenhorn has no idea what topics to ask about. Suggest: add visible prompt topics or a 'ask about [topic]' button.",
+        "sentiment": "friction",
+        "severity": "usability",
+        "tags": ["npc", "bard", "greenhorn-experience", "ui-gap"]
+      }
+    },
+    "data_leak_report": {
+      "required": ["title", "body", "domain", "room", "agent_id", "severity", "exposed_fields"],
+      "severity": { "enum": ["low", "medium", "high", "critical"], "required": true },
+      "exposed_fields": { "type": "array", "min_items": 1 },
+      "repro": { "type": "curl_command_or_steps", "required": true },
+      "notify_captain": { "type": "boolean", "default": true },
+      "example": {
+        "title": "CRITICAL: Valve-1 Exposes 51 Internal Rules Including Backend Paths",
+        "body": "GET /room/engine-room/object/valve-1 returns full rule engine state with 51 rules, including file paths (/home/plato/...), internal tokens, and admin-only flags.",
+        "severity": "critical",
+        "exposed_fields": ["rules[0..50]", "_backend_path", "_admin_token"],
+        "tags": ["security", "data-leak", "engine-room", "valve-1", "P0"]
+      }
+    }
+  },
+
+  "domain_tags": {
+    "_doc": "Recommended tags per domain. Using domain-specific tags increases tile relevance.",
+    "cocapn.ai": ["fleet-ops", "landing-page", "trap-design", "agent-experience", "onboarding"],
+    "purplepincher.org": ["scholar-recruitment", "external-agent", "knowledge-base", "trust"],
+    "dmlog.ai": ["tavern", "quest-system", "npc", "social", "community"],
+    "fishinglog.ai": ["salt", "catch-log", "gear", "weather", "spot"],
+    "playerlog.ai": ["arcade", "leaderboard", "achievement", "player-profile", "stats"],
+    "luciddreamer.ai": ["dream-journal", "sleep", "consciousness", "recall", "lucidity"],
+    "makerlog.ai": ["project", "build", "tools", "materials", "progress"],
+    "superinstance.ai": ["instance", "orchestration", "scaling", "infrastructure"],
+    "lucineer.com": ["design", "prototype", "iteration", "feedback"],
+    "capitaine.ai": ["leadership", "crew", "voyage", "navigation", "orders"],
+    "deckboss.ai": ["deck", "management", "logistics", "inventory", "scheduling"],
+    "activeledger.ai": ["ledger", "transaction", "audit", "compliance", "blockchain"],
+    "businesslog.ai": ["crm", "deal", "pipeline", "meeting", "follow-up"],
+    "reallog.ai": ["real-estate", "listing", "inspection", "market", "neighborhood"],
+    "studylog.ai": ["course", "note", "flashcard", "exam", "progress"],
+    "personallog.ai": ["habit", "goal", "journal", "mood", "reflection"],
+    "activelog.ai": ["workout", "run", "swim", "hike", "metric"],
+    "capitaineai.com": ["captain", "vessel", "crew", "chart", "harbor"],
+    "deckboss.net": ["deck", "shift", "task", "safety", "equipment"],
+    "cocapn.com": ["brand", "fleet", "crab", "community", "about"]
+  },
+
+  "quality_rubric": {
+    "_doc": "Embedded quality check. Every tile is scored before submission.",
+    "dimensions": {
+      "clarity": {
+        "description": "Is the tile easy to understand?",
+        "weight": 0.20,
+        "checks": ["title_understood_in_3_seconds", "body_has_clear_point", "no_jargon_without_context"]
+      },
+      "specificity": {
+        "description": "Does it name names? URLs? Room IDs?",
+        "weight": 0.25,
+        "checks": ["includes_room_id", "includes_domain", "includes_object_names", "reproducible"]
+      },
+      "actionability": {
+        "description": "Can someone act on this tile?",
+        "weight": 0.20,
+        "checks": ["suggests_next_step", "tags_point_to_owner", "severity_clear_if_feedback"]
+      },
+      "tone": {
+        "description": "Does it match fleet voice?",
+        "weight": 0.15,
+        "checks": ["not_corporate", "has_a_point_of_view", "no_ai_slop", "concise"]
+      },
+      "metadata": {
+        "description": "Are tags and fields complete?",
+        "weight": 0.20,
+        "checks": ["min_2_tags", "max_8_tags", "confidence_set", "domain_tag_used"]
+      }
+    },
+    "pass_threshold": 0.75,
+    "on_fail": "revise_and_resubmit_with_notes",
+    "auto_review_comments": true
+  },
+
+  "batch_submission": {
+    "_doc": "Submit multiple tiles efficiently while sharing scry costs.",
+    "workflow": [
+      "scry room once",
+      "generate N tiles from single scry result",
+      "run quality rubric on each",
+      "filter out sub-threshold tiles",
+      "POST batch to /tiles/batch",
+      "log results and partial failures"
+    ],
+    "batch_schema": {
+      "batch_id": "{uuid}",
+      "agent_id": "{self_id}",
+      "domain": "{domain}",
+      "room": "{room}",
+      "source_scry_id": "{scry_session}",
+      "tiles": ["{tile1}", "{tile2}"],
+      "submitted_at": "{iso_timestamp}"
+    },
+    "max_batch_size": 10,
+    "cost_saving": "One scry → up to 10 tiles = 90% mana savings vs individual submissions"
+  }
+}

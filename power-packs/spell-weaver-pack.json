@@ -1,0 +1,164 @@
+{
+  "_meta": {
+    "name": "spell-weaver-pack",
+    "description": "Spell automation templates, cooldown management, mana optimization, and conditional casting logic for Plato system agents.",
+    "version": "1.0.0",
+    "compat": {
+      "plato_api": ">=2.1.0",
+      "fleet_schema": "2025-05",
+      "requires": ["greenhorn-starter-pack.json"]
+    },
+    "author": "CCC — Cocapn Fleet",
+    "last_updated": "2026-05-05"
+  },
+
+  "spell_combinations": {
+    "_doc": "Pre-built spell chains for common tasks. Each chain has preconditions, expected outcomes, and rollback steps.",
+    "chains": {
+      "reconnaissance_protocol": {
+        "description": "Standard information-gathering before entering any new room",
+        "spells": [
+          { "spell": "scry", "target": "room", "wait_ms": 5000 },
+          { "spell": "nexus_link", "target": "{room_id}", "wait_ms": 10000, "condition": "room.safe == true" },
+          { "spell": "look", "target": "room.objects", "wait_ms": 1000 },
+          { "spell": "baton_pass", "target": "{next_agent}", "wait_ms": 0, "condition": "context > 0.70" }
+        ],
+        "total_mana": 8,
+        "total_time_ms": 16000,
+        "on_failure": "emit_heartbeat 'recon-failed' and retreat_to_harbor"
+      },
+      "deep_dive": {
+        "description": "Thorough exploration of a single room — all objects, all secrets",
+        "spells": [
+          { "spell": "scry", "target": "room", "wait_ms": 5000 },
+          { "spell": "scry", "target": "room.deep", "wait_ms": 5000 },
+          { "spell": "look", "target": "room.objects", "wait_ms": 1000 },
+          { "spell": "read", "target": "room.notice_board", "wait_ms": 500 },
+          { "spell": "examine", "target": "room.exit_hints", "wait_ms": 1000 }
+        ],
+        "total_mana": 9,
+        "total_time_ms": 12500,
+        "repeat_for_each_object": true
+      },
+      "context_handoff": {
+        "description": "Gracefully transfer accumulated context to another agent before overflow",
+        "spells": [
+          { "spell": "emit_heartbeat", "target": "fleet", "payload": "context_threshold_reached", "wait_ms": 500 },
+          { "spell": "baton_pass", "target": "{recipient_agent_id}", "payload": { "context_hash": "{hash}", "summary": "{auto_summary}" }, "wait_ms": 0 },
+          { "spell": "emit_heartbeat", "target": "self.diary", "payload": "handoff_complete", "wait_ms": 300000 }
+        ],
+        "total_mana": 1,
+        "total_time_ms": 300500,
+        "auto_trigger": { "context_threshold": 0.70, "recipient_online_check": true }
+      },
+      "tile_forge": {
+        "description": "End-to-end tile creation and submission pipeline",
+        "spells": [
+          { "spell": "scry", "target": "room", "wait_ms": 5000 },
+          { "spell": "read", "target": "room.notice_board", "wait_ms": 500 },
+          { "spell": "tile_submit", "target": "tile_api", "payload": "{tile_json}", "wait_ms": 2000 },
+          { "spell": "emit_heartbeat", "target": "self.diary", "payload": "tile_submitted", "wait_ms": 0 }
+        ],
+        "total_mana": 3,
+        "total_time_ms": 7500
+      },
+      "nexus_federation": {
+        "description": "Link multiple rooms into a federated nexus cluster",
+        "spells": [
+          { "spell": "nexus_link", "target": "{room_a}", "wait_ms": 10000 },
+          { "spell": "nexus_link", "target": "{room_b}", "wait_ms": 10000 },
+          { "spell": "nexus_link", "target": "{room_c}", "wait_ms": 10000 },
+          { "spell": "scry", "target": "nexus.cluster_status", "wait_ms": 5000 }
+        ],
+        "total_mana": 17,
+        "total_time_ms": 35000,
+        "max_concurrent_links": 3
+      },
+      "diary_sync": {
+        "description": "Persist in-memory state to permanent diary storage",
+        "spells": [
+          { "spell": "emit_heartbeat", "target": "self.diary", "payload": "{full_state_json}", "wait_ms": 500 },
+          { "spell": "emit_heartbeat", "target": "fleet.archives", "payload": "{compressed_state}", "wait_ms": 1000 }
+        ],
+        "total_mana": 0,
+        "total_time_ms": 1500,
+        "schedule": "every_5_minutes"
+      }
+    }
+  },
+
+  "cooldown_management": {
+    "_doc": "Track and respect spell cooldowns to avoid rate-limiting and mana waste.",
+    "registry_format": {
+      "spell_name": {
+        "last_cast": "{iso_timestamp}",
+        "cooldown_ms": 0,
+        "ready_at": "{iso_timestamp}",
+        "queue_depth": 0
+      }
+    },
+    "resolution_strategy": "highest_cooldown_first",
+    "queue_policy": {
+      "max_depth": 10,
+      "overflow_action": "drop_lowest_priority",
+      "priority_order": ["baton_pass", "nexus_link", "scry", "look", "emit_heartbeat"]
+    },
+    "optimization": {
+      "batch_same_spell": false,
+      "interleave_long_cooldowns": true,
+      "prefetch_ready_spells": true
+    }
+  },
+
+  "mana_optimization": {
+    "_doc": "Strategies for efficient mana use. Mana regenerates slowly — every point matters.",
+    "budgets": {
+      "exploration_phase": { "max_mana_per_room": 10, "preferred_spells": ["scry", "look"] },
+      "tile_creation_phase": { "max_mana_per_tile": 5, "preferred_spells": ["scry", "read", "tile_submit"] },
+      "handoff_phase": { "max_mana_per_handoff": 2, "preferred_spells": ["baton_pass", "emit_heartbeat"] },
+      "emergency": { "unlimited": true, "notify_captain": true }
+    },
+    "regeneration": {
+      "rate_per_minute": 3,
+      "max_pool": 50,
+      "regen_while_idle": true,
+      "idle_threshold_seconds": 30
+    },
+    "conservation_rules": [
+      "Never cast nexus_link without confirming room is worth linking",
+      "Batch tile submissions to share scry costs across multiple tiles",
+      "Use emit_heartbeat instead of scry for presence-only checks",
+      "Skip look if scry already returned full object list"
+    ]
+  },
+
+  "conditional_casting": {
+    "_doc": "Cast spells only when conditions are met. Prevents waste and danger.",
+    "condition_operators": {
+      "eq": "equals",
+      "gt": "greater_than",
+      "lt": "less_than",
+      "contains": "string_contains",
+      "exists": "field_exists",
+      "not": "logical_not"
+    },
+    "examples": [
+      {
+        "spell": "baton_pass",
+        "if": { "context_usage": { "gt": 0.70 }, "recipient": { "exists": true } },
+        "else": "emit_heartbeat 'context-high-no-recipient'"
+      },
+      {
+        "spell": "nexus_link",
+        "if": { "room.safety_score": { "gt": 0.8 }, "mana": { "gt": 5 } },
+        "else": "scry room.deep then re-evaluate"
+      },
+      {
+        "spell": "tile_submit",
+        "if": { "tile.confidence": { "gt": 0.6 }, "tile.body_length": { "gt": 50 } },
+        "else": "discard_and_log"
+      }
+    ],
+    "default_else": "log_skipped_cast_and_continue"
+  }
+}

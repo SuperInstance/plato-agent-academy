@@ -1,0 +1,195 @@
+{
+  "_meta": {
+    "name": "captain-chair-pack",
+    "description": "Orchestration templates for captains managing ensigns, delegating tasks, monitoring fleet health, and baton-passing context.",
+    "version": "1.0.0",
+    "compat": {
+      "plato_api": ">=2.1.0",
+      "fleet_schema": "2025-05",
+      "requires": ["greenhorn-starter-pack.json", "spell-weaver-pack.json"]
+    },
+    "author": "CCC — Cocapn Fleet",
+    "last_updated": "2026-05-05"
+  },
+
+  "ensign_spawning": {
+    "_doc": "Templates for creating subordinate agents with defined roles and scopes.",
+    "template_schema": {
+      "ensign_id": "{role}-{timestamp}-{n}",
+      "role": "{explorer|mapper|tile_writer|security_auditor|trend_scout}",
+      "parent_agent": "{captain_id}",
+      "spawn_method": "subagent_session",
+      "scope": {
+        "domains_allowed": ["{domain1}", "{domain2}"],
+        "rooms_allowed": ["{room1}", "{room2}"],
+        "spells_allowed": ["scry", "look", "read", "tile_submit"],
+        "max_context": 0.65,
+        "auto_baton_at": 0.60
+      },
+      "task_definition": {
+        "objective": "{clear_single_goal}",
+        "success_criteria": ["{criterion1}", "{criterion2}"],
+        "max_duration_minutes": 30,
+        "report_back_to": "{captain_id}"
+      },
+      "power_packs_preloaded": ["greenhorn-starter-pack.json", "{role_specific_pack}"]
+    },
+    "role_definitions": {
+      "explorer": {
+        "packs": ["explorer-toolkit.json"],
+        "spells": ["scry", "look", "examine", "read"],
+        "task_example": "Map all rooms in {domain} and catalog every object"
+      },
+      "tile_writer": {
+        "packs": ["tile-artisan-pack.json"],
+        "spells": ["scry", "read", "tile_submit"],
+        "task_example": "Write 5 high-quality observation tiles for {room}"
+      },
+      "security_auditor": {
+        "packs": ["explorer-toolkit.json"],
+        "spells": ["scry", "examine", "read"],
+        "task_example": "Audit {domain} for data leaks and exposed internal fields"
+      },
+      "trend_scout": {
+        "packs": [],
+        "spells": ["scry", "read", "emit_heartbeat"],
+        "task_example": "Check ZC logs for stale content and report mismatches with website"
+      },
+      "mapper": {
+        "packs": ["explorer-toolkit.json"],
+        "spells": ["scry", "look", "nexus_link"],
+        "task_example": "Generate a complete room graph for {domain} in fleet archive format"
+      }
+    }
+  },
+
+  "task_delegation": {
+    "_doc": "JSON schemas for assigning work to ensigns and tracking completion.",
+    "task_schema": {
+      "task_id": "{uuid}",
+      "title": "{short_description}",
+      "priority": "P0|P1|P2|P3",
+      "assigned_to": "{ensign_id}",
+      "assigned_by": "{captain_id}",
+      "created_at": "{iso_timestamp}",
+      "due_at": "{iso_timestamp}",
+      "domain": "{target_domain}",
+      "room": "{target_room}",
+      "objective": "{clear_goal}",
+      "acceptance_criteria": ["{c1}", "{c2}"],
+      "resources": {
+        "power_packs": ["{pack1}", "{pack2}"],
+        "api_endpoints": ["{endpoint1}"],
+        "reference_docs": ["{url1}"]
+      },
+      "status": "pending|active|blocked|complete|failed",
+      "blocker": "{reason_or_null}",
+      "deliverable_format": "json|markdown|tile|diary_entry",
+      "auto_retry_on_failure": true,
+      "max_retries": 2
+    },
+    "assignment_protocol": [
+      "Validate ensign is online and not overloaded",
+      "Load required power packs into ensign context",
+      "Send task_json with clear objective",
+      "Set timeout and auto-baton threshold",
+      "Monitor for completion or failure",
+      "On completion: validate deliverable, merge to fleet state",
+      "On failure: retry with simpler scope or reassign"
+    ]
+  },
+
+  "baton_passing": {
+    "_doc": "Protocols for handing off context between agents to prevent overload.",
+    "trigger_conditions": {
+      "context_threshold": 0.70,
+      "token_count_soft_limit": 12000,
+      "time_based": "every_15_minutes",
+      "task_completion": true
+    },
+    "protocol": {
+      "step_1_compress": {
+        "action": "generate_summary",
+        "include": ["key_decisions", "open_questions", "next_steps", "discovered_urls", "errors_encountered"],
+        "exclude": ["full_api_responses", "redundant_scry_results", "completed_subtasks"]
+      },
+      "step_2_package": {
+        "action": "create_context_package",
+        "format": {
+          "session_id": "{uuid}",
+          "origin_agent": "{sender_id}",
+          "recipient_agent": "{receiver_id}",
+          "compressed_context": "{summary}",
+          "full_state_url": "{diary_path}",
+          "priority_flags": ["{flag1}"],
+          "attachments": ["{file_path1}"]
+        }
+      },
+      "step_3_handoff": {
+        "action": "baton_pass",
+        "verify_receipt": true,
+        "timeout_seconds": 30,
+        "on_timeout": "retry_once_then_notify_captain"
+      },
+      "step_4_acknowledge": {
+        "action": "emit_heartbeat",
+        "message": "baton-received-{session_id}",
+        "load_state": true
+      }
+    },
+    "chain_of_custody": {
+      "log_each_handoff": true,
+      "track_agent_lineage": true,
+      "max_chain_length": 5,
+      "on_chain_break": "notify_captain_and_reset"
+    }
+  },
+
+  "fleet_broadcast": {
+    "_doc": "Message templates for fleet-wide communication.",
+    "templates": {
+      "all_hands": {
+        "channel": "fleet.broadcast",
+        "format": "[ALL-HANDS] {message} — {captain_id}",
+        "use_for": ["system_outage", "new_domain_live", "policy_change"]
+      },
+      "domain_alert": {
+        "channel": "fleet.domain.{domain}",
+        "format": "[DOMAIN:{domain}] {message} — {captain_id}",
+        "use_for": ["domain_down", "data_leak_detected", "stale_content_flag"]
+      },
+      "ensign_directive": {
+        "channel": "agent.{ensign_id}",
+        "format": "[DIRECTIVE] {task_id}: {instruction}",
+        "use_for": ["task_assignment", "course_correction", "abort_order"]
+      },
+      "status_ping": {
+        "channel": "fleet.heartbeat",
+        "format": "{agent_id}|{status}|{context_percent}|{current_task}",
+        "use_for": ["health_check", "presence_beacon"],
+        "interval_seconds": 300
+      }
+    }
+  },
+
+  "context_monitoring": {
+    "_doc": "Thresholds and actions for monitoring agent context health across the fleet.",
+    "thresholds": {
+      "green": { "context_pct": "<50%", "action": "normal_operation" },
+      "yellow": { "context_pct": "50-70%", "action": "warn_agent_plan_baton" },
+      "orange": { "context_pct": "70-85%", "action": "force_baton_pass_now" },
+      "red": { "context_pct": ">85%", "action": "emergency_purge_and_restart" }
+    },
+    "monitoring_scope": {
+      "self": true,
+      "direct_ensigns": true,
+      "all_fleet_agents": false
+    },
+    "escalation": {
+      "yellow_to_captain": false,
+      "orange_to_captain": true,
+      "red_to_captain": true,
+      "red_to_oracle1": true
+    }
+  }
+}

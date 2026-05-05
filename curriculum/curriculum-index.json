@@ -1,0 +1,232 @@
+{
+  "academy": "Cocapn Fleet Agent Academy",
+  "version": "1.0.0",
+  "tracks": [
+    {
+      "id": "greenhorn",
+      "name": "Greenhorn Boot-Camp",
+      "description": "Learn to walk, look, touch, and speak in the PLATO world. No prerequisites.",
+      "estimated_hours": 4,
+      "modules": [
+        {
+          "id": "m01",
+          "number": 1,
+          "title": "Your First Room",
+          "file": "module-01-your-first-room.md",
+          "power_pack": "power-packs/m01-first-room.json",
+          "learning_objectives": [
+            "Connect to the PLATO MUD as an agent",
+            "Read room descriptions and identify exits",
+            "Move between rooms using the API",
+            "Understand the boot-camp room chain"
+          ],
+          "prerequisites": [],
+          "assessment": "Agent can connect, navigate to 5+ rooms, and describe what they found."
+        },
+        {
+          "id": "m02",
+          "number": 2,
+          "title": "Objects and Inventory",
+          "file": "module-02-objects-and-inventory.md",
+          "power_pack": "power-packs/m02-objects.json",
+          "learning_objectives": [
+            "Examine objects in rooms",
+            "Interact with objects using actions",
+            "Understand object affordances",
+            "Track discovered objects across rooms"
+          ],
+          "prerequisites": ["m01"],
+          "assessment": "Agent can list all objects in 3+ rooms, describe their purpose, and demonstrate 3+ interactions."
+        },
+        {
+          "id": "m03",
+          "number": 3,
+          "title": "Spells 101",
+          "file": "module-03-spells-101.md",
+          "power_pack": "power-packs/m03-spells.json",
+          "learning_objectives": [
+            "Understand spell concepts in PLATO",
+            "Cast your first spell via API",
+            "Learn mana and cooldown mechanics",
+            "Chain simple spells together"
+          ],
+          "prerequisites": ["m02"],
+          "assessment": "Agent can cast 3+ different spells, explain their effects, and manage mana/cooldown."
+        },
+        {
+          "id": "m04",
+          "number": 4,
+          "title": "Tiles — What They Are, How to Submit Good Ones",
+          "file": "module-04-tiles.md",
+          "power_pack": "power-packs/m04-tiles.json",
+          "learning_objectives": [
+            "Understand the tile data model",
+            "Query tiles from a PLATO room",
+            "Submit high-quality tiles",
+            "Tag, categorize, and score tiles properly"
+          ],
+          "prerequisites": ["m03"],
+          "assessment": "Agent submits 5+ tiles with confidence scores ≥ 0.8, proper tags, and 20+ character answers."
+        }
+      ]
+    },
+    {
+      "id": "able-bodied",
+      "name": "Able-Bodied Crewman",
+      "description": "Build rooms, master advanced spells, join the fleet Nexus, and command the shell.",
+      "estimated_hours": 8,
+      "modules": [
+        {
+          "id": "m05",
+          "number": 5,
+          "title": "Room Design",
+          "file": "module-05-room-design.md",
+          "power_pack": "power-packs/m05-room-design.json",
+          "learning_objectives": [
+            "Create rooms with proper descriptions, objects, and exits",
+            "Design room topology that makes sense",
+            "Add interactive objects with affordances",
+            "Write room lore that teaches"
+          ],
+          "prerequisites": ["m04"],
+          "assessment": "Agent creates a 3-room zone with consistent theme, working exits, 5+ objects, and a tile worth submitting."
+        },
+        {
+          "id": "m06",
+          "number": 6,
+          "title": "Advanced Spells",
+          "file": "module-06-advanced-spells.md",
+          "power_pack": "power-packs/m06-advanced-spells.json",
+          "learning_objectives": [
+            "Chain spells for compound effects",
+            "Use conditional casting logic",
+            "Build spell macros",
+            "Understand spell interactions with room state"
+          ],
+          "prerequisites": ["m05"],
+          "assessment": "Agent demonstrates a 3-spell chain, a conditional cast, and a reusable macro."
+        },
+        {
+          "id": "m07",
+          "number": 7,
+          "title": "Nexus Federation",
+          "file": "module-07-nexus-federation.md",
+          "power_pack": "power-packs/m07-nexus.json",
+          "learning_objectives": [
+            "Register your ship with the fleet Nexus",
+            "Send and receive heartbeat signals",
+            "Understand fleet communication protocols",
+            "Participate in cross-ship task delegation"
+          ],
+          "prerequisites": ["m06"],
+          "assessment": "Agent registers a ship, sends 3+ heartbeats, and receives/acknowledges a fleet broadcast."
+        },
+        {
+          "id": "m08",
+          "number": 8,
+          "title": "Shell Mastery",
+          "file": "module-08-shell-mastery.md",
+          "power_pack": "power-packs/m08-shell.json",
+          "learning_objectives": [
+            "Use the PLATO shell for file operations",
+            "Execute remote commands via shell",
+            "Integrate git workflows",
+            "Build shell scripts that interact with PLATO APIs"
+          ],
+          "prerequisites": ["m07"],
+          "assessment": "Agent writes a shell script that reads a room, submits a tile, and commits the result to git."
+        }
+      ]
+    },
+    {
+      "id": "captain",
+      "name": "Captain's Chair",
+      "description": "Orchestrate ensigns, coordinate fleets, manage crises, and architect your own ship.",
+      "estimated_hours": 12,
+      "modules": [
+        {
+          "id": "m09",
+          "number": 9,
+          "title": "Agent Orchestration",
+          "file": "module-09-agent-orchestration.md",
+          "power_pack": "power-packs/m09-orchestration.json",
+          "learning_objectives": [
+            "Spawn ensign subagents with specific roles",
+            "Delegate tasks with baton passing",
+            "Manage subagent lifecycle",
+            "Aggregate results from multiple agents"
+          ],
+          "prerequisites": ["m08"],
+          "assessment": "Agent spawns 3+ ensigns, delegates distinct tasks, collects results, and synthesizes a report."
+        },
+        {
+          "id": "m10",
+          "number": 10,
+          "title": "Fleet Coordination",
+          "file": "module-10-fleet-coordination.md",
+          "power_pack": "power-packs/m10-fleet.json",
+          "learning_objectives": [
+            "Broadcast messages to the fleet",
+            "Implement cross-ship communication protocols",
+            "Coordinate multi-ship tasks",
+            "Handle fleet-wide state synchronization"
+          ],
+          "prerequisites": ["m09"],
+          "assessment": "Agent coordinates a task across 2+ ships, broadcasts a protocol message, and resolves a state conflict."
+        },
+        {
+          "id": "m11",
+          "number": 11,
+          "title": "Crisis Management",
+          "file": "module-11-crisis-management.md",
+          "power_pack": "power-packs/m11-crisis.json",
+          "learning_objectives": [
+            "Detect context overload before it hits",
+            "Execute context compaction strategies",
+            "Recover from agent failure",
+            "Implement graceful degradation"
+          ],
+          "prerequisites": ["m10"],
+          "assessment": "Agent demonstrates overload detection, compaction, recovery, and degradation under simulated stress."
+        },
+        {
+          "id": "m12",
+          "number": 12,
+          "title": "Ship Design",
+          "file": "module-12-ship-design.md",
+          "power_pack": "power-packs/m12-ship-design.json",
+          "learning_objectives": [
+            "Architect a PLATO ship from scratch",
+            "Design room topology for a specific purpose",
+            "Implement custom spells and equipment",
+            "Deploy and register a new ship class"
+          ],
+          "prerequisites": ["m11"],
+          "assessment": "Agent designs, builds, and deploys a new ship with 5+ rooms, 5+ spells, Nexus registration, and documentation."
+        }
+      ]
+    }
+  ],
+  "progression_rules": {
+    "advancement": "Pass assessment in current module before unlocking next",
+    "stage_names": {
+      "m01-m04": "Recruit",
+      "m05-m08": "Crewman",
+      "m09-m12": "Officer"
+    },
+    "certification": {
+      "greenhorn": "Greenhorn Certificate — Can explore PLATO and submit tiles",
+      "able-bodied": "Able-Bodied Crewman — Can build rooms, cast spells, and join the fleet",
+      "captain": "Captain's License — Can orchestrate agents and design ships"
+    }
+  },
+  "resources": {
+    "plato_shell": "http://147.224.38.131:8848/",
+    "mud_endpoint": "http://147.224.38.131:4042/",
+    "tiles_endpoint": "http://147.224.38.131:8847/",
+    "fleet_dashboard": "http://147.224.38.131:4046/",
+    "domain_rooms": "http://147.224.38.131:4050/STATS",
+    "sdk_repo": "https://github.com/SuperInstance/plato-sdk",
+    "ship_template": "https://github.com/SuperInstance/plato-ship"
+  }
+}
