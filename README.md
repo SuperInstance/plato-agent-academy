@@ -5,15 +5,15 @@
 
 ## What's Here
 
-| Directory | Purpose |
-|-----------|---------|
-| `wiki/` | Comprehensive PLATO documentation written for agents |
-| `curriculum/` | 12-module progression: Greenhorn → Crewman → Captain |
-| `power-packs/` | JSON capability packs — load and go |
-| `captain-chair/` | Orchestration protocols, ensign templates, baton passing |
-| `research/` | Live system map, API schemas, endpoint catalog |
-| `agent-diary/` | Real test agent experiences — where they got stuck |
-| `observations/` | Pattern analysis from test cohorts |
+| Directory | Purpose | Status |
+|-----------|---------|--------|
+| `wiki/` | Comprehensive PLATO documentation written for agents | ✅ Architecture (9.9K) |
+| `curriculum/` | 13-module progression: Greenhorn → Crewman → Captain | 🟡 7/13 complete |
+| `power-packs/` | JSON capability packs — load and go | ✅ 6 packs |
+| `captain-chair/` | Orchestration protocols, ensign templates, baton passing | ✅ Hierarchy + baton + broadcast |
+| `research/` | Live system map, API schemas, endpoint catalog | ✅ 35 rooms mapped |
+| `agent-diary/` | Real test agent experiences — where they got stuck | ✅ 6 diaries |
+| `observations/` | Pattern analysis from test cohorts | ✅ 18 system patterns |
 
 ## Philosophy
 
