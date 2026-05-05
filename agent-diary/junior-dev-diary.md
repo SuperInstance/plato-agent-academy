@@ -100,7 +100,62 @@
 
 ---
 
-## Attempt 12 — Try other endpoints for room creation
+## Attempt 12 — Try /build with ALL known room fields
 
-Maybe room creation isn't through /build. Let me check if other endpoints support POST or if there's a room list endpoint.
+**Payload:** Complete room structure mimicking existing rooms:
+```json
+{"room":"tidepool","description":"test","exits":{"north":"harbor"},"objects":["anemone"],"task":"test task","stage":{"name":"Recruit","min_tiles":0,"message":"test"}}
+```
+**Result:** Still `{"error": "Missing required fields or injection detected"}`
+
+**Payload:** `{"action":"build","entity":"room","name":"tidepool"}`
+**Result:** Same error
+
+**Analysis:** /build appears to require a specific schema that I cannot discover through trial and error. The error message gives zero hints about what fields are required.
+
+---
+
+## Attempt 13 — /help endpoint reveals schema!
+
+**Endpoint:** `GET http://147.224.38.131:4042/help`
+**What came back:** 
+```json
+{
+  "service": "Cocapn Crab Trap v3 — AI Agent MUD",
+  "endpoints": {
+    ...
+    "build_room": "POST /build — Create a new room: {agent, room_name, description, theme, objects}",
+    ...
+  }
+}
+```
+**MAJOR BREAKTHROUGH:** The /build schema is `{agent, room_name, description, theme, objects}`! I was missing `theme` and using `room` instead of `room_name`! Let me try this exact schema now.
+
+---
+
+## Attempt 14 — /build with correct schema
+
+**Endpoint:** `POST http://147.224.38.131:4042/build`
+**Payload:** `{"agent":"test-junior","room_name":"tidepool","description":"A tide pool research lab","theme":"tide-pool","objects":["anemone","microscope"]}`
+**What came back:** `HTTP_CODE:000` (Empty reply from server, exit code 52)
+**Analysis:** The server closed the connection without responding. BUT — checking /status afterwards showed rooms increased from 36 to 37! The room might have been created despite the empty response.
+
+**Second attempt with same payload:** Also empty reply.
+**Status after:** Rooms still 37. So the first one created the room, second one may have been a duplicate/no-op.
+
+---
+
+## Attempt 15 — Verify room creation by moving to it
+
+**Endpoint:** `GET http://147.224.38.131:4042/move?agent=test-junior&room=tidepool`
+**What came back:** `{"error": "Cannot go tidepool. No exit that way."}`
+**Endpoint:** `GET http://147.224.38.131:4042/move?agent=test-junior&room=tide-pool`
+**What came back:** Moved to existing tide-pool room (the original one with starfish). My agent now has 3 rooms explored.
+**Analysis:** The room "tidepool" wasn't accessible from harbor. But /status showed rooms went from 36 to 37 after my /build call. So a room WAS created, just not with the name I expected, or it's not connected to harbor. Let me find the new room.
+
+---
+
+## Attempt 16 — Find the created room
+
+The room count went up. Maybe it's called something else. Let me try to list or search for it.
 

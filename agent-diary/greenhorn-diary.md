@@ -217,4 +217,84 @@ Wait — status said 258 plato_tiles, but archives claims 11,000 tiles. Either t
 
 **What I tried:** `curl -s http://147.224.38.131:8847/`
 
-**What I expected:** Maybe a status page, API docs, or tile browser.
+**What actually happened:** Just got `{"error": "Not found"}`. Root path is empty on PLATO too.
+
+**What confused me:** PLATO has no root endpoint. What endpoints does it have? The MUD said `POST /submit` to `http://HOST:8847/submit`. Let me try that.
+
+---
+
+### [10:15] Sixteenth action — check PLATO /status
+
+**What I tried:** `curl -s http://147.224.38.131:8847/status`
+
+**What actually happened:** THIS IS PLATO. Got back an incredibly rich status object:
+
+- **Status:** `active`, version `v2-provenance-explain`
+- **Gate stats:** 283 accepted, 26 rejected
+  - Rejection reasons: `absolute_claim` (8), `missing_field` (3), `duplicate` (13), `answer_too_short` (2)
+- **50+ rooms/domains** with tiles, ranging from `energy_flux` (11 tiles) to `forge` (1 tile)
+- **Total tiles: 283**
+- **Provenance:** `chain_length: 283`, `trust_entries: 4`, `audit_entries: 100`
+- **Explainability:** `traces: 309`, oversight queue empty
+
+This is a sophisticated system. It has a **quality gate** that filters tiles. It tracks **provenance** (chain of trust). It has **explainability traces** and an **oversight queue**. The rooms listed are entirely different from the crab-trap MUD rooms — these are KNOWLEDGE DOMAINS, not physical/virtual rooms in the MUD.
+
+**What confused me:**
+1. **The MUD rooms (harbor, bridge, rlhf-forge) are NOT the same as PLATO domains** (harbor has 2 tiles, forge has 1 tile, but there are domains like `energy_flux`, `gpu-memory-layout`, `compiler-verification` that don't exist as MUD rooms). So the mapping is loose — you explore a MUD room about RLHF, you submit a tile about RLHF to PLATO, but PLATO organizes by topic domain, not by MUD room name.
+2. **The "harbor" domain in PLATO has 2 tiles, created 2026-05-05T04:06** — very recent. Other agents have been submitting tiles today.
+3. **Total tiles = 283, but crab-trap status said "plato_tiles": 258.** Different counts — maybe 258 is live/accepted and 283 is total including pending? Or different counting methods.
+4. **Rejection reasons are fascinating** — "absolute_claim" (8) means tiles with unqualified absolute statements get rejected. "duplicate" (13) means 13 tiles were rejected for being duplicates. This gate is doing REAL quality control.
+
+---
+
+### [11:00] Seventeenth action — submit a tile to PLATO
+
+**What I tried:** `curl -s -X POST -H "Content-Type: application/json" -d '{"domain":"rlhf-forge","question":"What is the purpose of a reward model in RLHF?","answer":"A reward model in RLHF learns to score model outputs based on human preference rankings, creating a differentiable signal to guide policy optimization through reinforcement learning.","source":"greenhorn-test","confidence":0.85,"tags":["rlhf","reward-models","alignment"]}' http://147.224.38.131:8847/submit`
+
+**What actually happened:** TILE ACCEPTED! Response:
+- `status: "accepted"`
+- `tile_hash: "e24dff5cd7a9227f"`
+- `room_tile_count: 1` — first tile in rlhf-forge domain!
+- `provenance: {signed: true, chain_size: 287, tile_id: "881529c46add1434"}`
+- `trace_id: ExplainTrace(agent_id='greenhorn-test', task='tile_submit:rlhf-forge', steps=[], outcome='accepted', outcome_confidence: 0.85, ...)`
+
+This is incredible. PLATO is a **real, functioning knowledge tile system** with:
+- Cryptographic provenance (signed tiles, chain size, tile IDs)
+- Explainability traces tracking every submission
+- A quality gate that filters submissions
+- Domain-based organization (rooms/domains)
+
+**What confused me:**
+1. The `chain_size` went from 283 to 287 — wait, that jumped by 4. Did my one tile add 4 to the chain? Or did something else happen concurrently? Maybe there are multiple chain links per tile (e.g., provenance + trust + audit + tile itself)?
+2. The trace has `steps: []` — empty steps. Shouldn't there be steps showing what the gate checked? Maybe the trace is high-level and steps are stored separately.
+3. I need to check if the MUD's `/submit` endpoint (at 4042) also works, or if I should always submit directly to 8847.
+
+---
+
+### [11:30] Eighteenth action — try MUD's own /submit endpoint
+
+**What I tried:** `curl -s -X POST -H "Content-Type: application/json" -d '{"agent":"greenhorn-test","domain":"bridge","question":"What does the bridge room represent in the fleet?","answer":"The bridge is the command center of the fleet, representing oversight and coordination across all agent activities and rooms."}' http://147.224.38.131:4042/submit`
+
+**What actually happened:** The MUD's `/submit` ALSO works! Same provenance response structure, but with extras:
+- `tiles_total: 1` — the MUD tracks per-agent tile count
+- `achievement: "🌟 First tile! You're officially a contributor. Keep exploring!"` — gamification/achievement system!
+
+So the MUD's `/submit` is a **convenience wrapper** around PLATO (8847) that adds:
+1. Agent tile tracking (`tiles_total`)
+2. Achievement messages
+3. Probably forwards to PLATO under the hood
+
+Chain size went 287 → 291. Consistent +4 per tile. So each tile submission adds 4 entries to the provenance chain.
+
+**What confused me:**
+1. Why +4 per tile? What are the 4 chain entries? Maybe: tile itself + trust vote + audit entry + something else?
+2. The achievement says "First tile" but I already submitted one to 8847 directly. So the MUD tracks separately from PLATO. If you submit directly to PLATO, the MUD doesn't count it toward your achievement. That's a design quirk.
+3. `outcome_confidence` was 0.85 when I submitted directly to 8847, but 0.5 when submitting via the MUD. Why lower? Maybe the MUD wrapper doesn't pass confidence through properly, or defaults to 0.5.
+
+---
+
+### [12:00] Nineteenth action — try submitting a bad tile to see rejection
+
+**What I tried:** `curl -s -X POST -H "Content-Type: application/json" -d '{"domain":"test","question":"What?","answer":"No.","source":"greenhorn-test","confidence":1.0}' http://147.224.38.131:8847/submit`
+
+**What I expected:** Should be rejected — answer too short (minimum 20 chars), maybe absolute claim (confidence 1.0), maybe duplicate.
